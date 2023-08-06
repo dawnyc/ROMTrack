@@ -2,7 +2,7 @@
 [ICCV 2023] Robust Object Modeling for Visual Tracking
 
 ## News
-**[July 31, 2023]**
+**[August 6, 2023]**
 - We release Code of ROMTrack.
 
 **[July 14, 2023]**
