@@ -16,7 +16,8 @@ class ROMTrack(BaseTracker):
     def __init__(self, params, dataset_name):
         super(ROMTrack, self).__init__(params)
         network = build_vit(params.cfg)
-        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu'), strict=True)
+        # network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
         self.cfg = params.cfg
         self.network = network.cuda()
         self.network.eval()

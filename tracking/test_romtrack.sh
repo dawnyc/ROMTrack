@@ -3,6 +3,7 @@
 # Then, uncomment the code of corresponding test settings.
 # Finally, you can find the tracking results on RESULTS_PATH and the tracking plots on RESULTS_PLOT_PATH. (see 'lib/test/evaluation/local.py')
 
+
 ##########-------------- ROMTrack -----------------##########
 ### LaSOT test and evaluation
 python tracking/test.py ROMTrack baseline_stage2 --dataset lasot --threads 32 --num_gpus 8 --params__model ROMTrack_epoch0100.pth.tar
@@ -32,4 +33,20 @@ python tracking/analysis_results.py --dataset_name lasot_ext --tracker_param bas
 # python tracking/test.py ROMTrack baseline_stage2 --dataset nfs --threads 32 --num_gpus 8 --params__model ROMTrack_epoch0100.pth.tar --params__search_area_scale 3.95
 # python tracking/analysis_results.py --dataset_name nfs --tracker_param baseline_stage2
 
-### For other models(ROMTrack-384, ROMTrack-384(Only for GOT-10k)), just modify the config
+
+##########-------------- ROMTrack-384 -----------------##########
+### LaSOT test and evaluation
+python tracking/test.py ROMTrack baseline_384_stage2 --dataset lasot --threads 32 --num_gpus 8 --params__model ROMTrack-384_epoch0100.pth.tar
+python tracking/analysis_results.py --dataset_name lasot --tracker_param baseline_384_stage2
+
+### LaSOT_ext test and evaluation
+python tracking/test.py ROMTrack baseline_384_stage2 --dataset lasot_ext --threads 32 --num_gpus 8 --params__model ROMTrack-384_epoch0100.pth.tar
+python tracking/analysis_results.py --dataset_name lasot_ext --tracker_param baseline_384_stage2
+
+### TrackingNet test and pack
+# python tracking/test.py ROMTrack baseline_384_stage2 --dataset trackingnet --threads 32 --num_gpus 8 --params__model ROMTrack-384_epoch0100.pth.tar --params__search_area_scale 4.5
+# python lib/test/utils/transform_trackingnet.py --tracker_name ROMTrack --cfg_name baseline_384_stage2
+
+### ROMTrack-384(Only for GOT-10k) GOT10k test and pack
+# python tracking/test.py ROMTrack got_384_stage2 --dataset got10k_test --threads 32 --num_gpus 8 --params__model ROMTrack-384_epoch0050.pth.tar --params__search_area_scale 4.75
+# python lib/test/utils/transform_got10k.py --tracker_name ROMTrack --cfg_name got_384_stage2
