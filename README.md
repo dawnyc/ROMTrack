@@ -2,7 +2,7 @@
 The official implementation of the ICCV 2023 paper [*Robust Object Modeling for Visual Tracking*](https://arxiv.org/abs/2308.05140)
 
 <p align="center">
-<img width="80%" src="asset/ROMTrack_Framework.png" alt="ROMTrack_Pipeline"/>
+<img width="100%" src="asset/ROMTrack_Framework.png" alt="ROMTrack_Pipeline"/>
 </p>
 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
