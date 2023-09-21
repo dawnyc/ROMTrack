@@ -342,7 +342,7 @@ class MixformerProcessing(BaseProcessing):
         # if data['search_images'].shape[0] == 1:
         #     data['valid'] = False
         #     return data
-        # return data
+        return data
 
     def _generate_regression_mask(self, target_center, mask_w, mask_h, mask_size=20):
         """
