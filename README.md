@@ -1,6 +1,9 @@
 # ROMTrack
 The official implementation of the ICCV 2023 paper [*Robust Object Modeling for Visual Tracking*](https://arxiv.org/abs/2308.05140)
 
+[[CVF Open Access]](https://openaccess.thecvf.com/content/ICCV2023/papers/Cai_Robust_Object_Modeling_for_Visual_Tracking_ICCV_2023_paper.pdf
+) [[Poster]](asset\Poster.pdf) [[Video]](https://www.bilibili.com/video/BV1p84y1d7ja/)
+
 <p align="center">
 <img width="100%" src="asset/ROMTrack_Framework.png" alt="ROMTrack_Pipeline"/>
 </p>
@@ -8,6 +11,10 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
 
 ## :newspaper: News
+**[October 18, 2023]**
+- We update paper in CVF Open Access version.
+- We release paper and video.
+
 **[September 21, 2023]**
 - We release Models and Raw Results of ROMTrack.
 - We refine README for more details.
@@ -125,6 +132,15 @@ We provide attention maps and feature maps for several sequences on LaSOT. Detai
 ## :pencil: Citation
 If our work is useful for your research, please feel free to star:star: and cite our paper:
 ```
+@InProceedings{Cai_2023_ICCV,
+    author    = {Cai, Yidong and Liu, Jie and Tang, Jie and Wu, Gangshan},
+    title     = {Robust Object Modeling for Visual Tracking},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2023},
+    pages     = {9589-9600}
+}
+
 @article{DBLP:journals/corr/abs-2308-05140,
   author       = {Yidong Cai and
                   Jie Liu and
