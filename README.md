@@ -2,7 +2,7 @@
 The official implementation of the ICCV 2023 paper [*Robust Object Modeling for Visual Tracking*](https://arxiv.org/abs/2308.05140)
 
 [[CVF Open Access]](https://openaccess.thecvf.com/content/ICCV2023/papers/Cai_Robust_Object_Modeling_for_Visual_Tracking_ICCV_2023_paper.pdf
-) [[Poster]](asset\Poster.pdf) [[Video]](https://www.bilibili.com/video/BV1p84y1d7ja/)
+) [[Poster]](asset/Poster.pdf) [[Video]](https://www.bilibili.com/video/BV1p84y1d7ja/)
 
 <p align="center">
 <img width="100%" src="asset/ROMTrack_Framework.png" alt="ROMTrack_Pipeline"/>
