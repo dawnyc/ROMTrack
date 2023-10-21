@@ -13,7 +13,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 ## :newspaper: News
 **[October 18, 2023]**
 - We update paper in CVF Open Access version.
-- We release paper and video.
+- We release poster and video.
 
 **[September 21, 2023]**
 - We release Models and Raw Results of ROMTrack.
