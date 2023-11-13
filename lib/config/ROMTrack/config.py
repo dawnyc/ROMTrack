@@ -2,7 +2,7 @@ from easydict import EasyDict as edict
 import yaml
 
 """
-Add default config for UniTrack.
+Add default config for ROMTrack.
 """
 cfg = edict()
 
