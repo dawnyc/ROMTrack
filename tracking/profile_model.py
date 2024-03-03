@@ -70,7 +70,7 @@ if __name__ == "__main__":
     bs = 1
     z_sz = cfg.TEST.TEMPLATE_SIZE
     x_sz = cfg.TEST.SEARCH_SIZE
-    '''import UniTrack network module'''
+    '''import ROMTrack network module'''
     model_module = importlib.import_module('lib.models.ROMTrack')
     if args.script == "ROMTrack":
         model_constructor = model_module.build_vit
