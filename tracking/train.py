@@ -37,7 +37,7 @@ def main():
                     % (args.script, args.config, args.save_dir, args.use_lmdb, args.script_prv, args.config_prv,
                        args.distill, args.script_teacher, args.config_teacher, args.stage1_model)
     elif args.mode == "multiple":
-        train_cmd = "python -m torch.distributed.launch --master_port %d --nproc_per_node %d lib/train/run_training.py " \
+        train_cmd = "python -m torch.distributed.run --master_port %d --nproc_per_node %d lib/train/run_training.py " \
                     "--script %s --config %s --save_dir %s --use_lmdb %d --script_prv %s --config_prv %s  " \
                     "--distill %d --script_teacher %s --config_teacher %s --stage1_model %s" \
                     % (args.master_port, args.nproc_per_node, args.script, args.config, args.save_dir, args.use_lmdb, args.script_prv,
