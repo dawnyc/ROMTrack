@@ -1,5 +1,5 @@
 echo "****************** Installing pytorch ******************"
-conda install -y pytorch==1.7.0 torchvision==0.8.1 cudatoolkit=10.2 -c pytorch
+conda install -y pytorch==1.11.0 torchvision==0.12.0 cudatoolkit=11.3 -c pytorch
 
 echo ""
 echo ""
@@ -80,11 +80,14 @@ pip install onnx onnxruntime-gpu==1.6.0
 echo ""
 echo ""
 echo "****************** Installing timm ******************"
-pip install timm==0.6.2.dev0
+pip install timm
 
 echo "****************** Installing yacs/einops/thop ******************"
 pip install yacs
 pip install einops
 pip install thop
+
+echo "****************** Installing chardet ******************"
+pip install chardet
 
 echo "****************** Installation complete! ******************"

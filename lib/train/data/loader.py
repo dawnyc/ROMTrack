@@ -85,7 +85,11 @@ def ltr_collate_stack1(batch):
             numel = sum([x.numel() for x in batch])
             storage = batch[0].storage()._new_shared(numel)
             out = batch[0].new(storage)
-        return torch.stack(batch, 1, out=out)
+        # return torch.stack(batch, 1, out=out)
+        # Fixed a UserWarning
+        out = torch.stack(batch, 1)
+        out.resize_(out.size())
+        return out
         # if batch[0].dim() < 4:
         #     return torch.stack(batch, 0, out=out)
         # return torch.cat(batch, 0, out=out)
