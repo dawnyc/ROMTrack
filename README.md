@@ -130,7 +130,7 @@ We provide attention maps and feature maps for several sequences on LaSOT. Detai
 * Our implementation of the ViT is modified from the [Timm](https://github.com/rwightman/pytorch-image-models) repo.
 
 ## :pencil: Citation
-If our work is useful for your research, please feel free to star:star: and cite our paper:
+If our work is useful for your research, please feel free to star:star2: and cite our paper:
 ```
 @InProceedings{Cai_2023_ICCV,
     author    = {Cai, Yidong and Liu, Jie and Tang, Jie and Wu, Gangshan},
