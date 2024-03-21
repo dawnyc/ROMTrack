@@ -11,6 +11,10 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
 
 ## :newspaper: News
+**[March 21, 2024]**
+- We update 2 radar plots for visualization on LaSOT and LaSOT_ext.
+- We post a blog on [Zhihu](https://zhuanlan.zhihu.com/p/662351482), welcome for reading.
+
 **[October 18, 2023]**
 - We update paper in CVF Open Access version.
 - We release poster and video.
@@ -47,6 +51,11 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 - Performance on Benchmarks
   <p align="center">
   <img width="90%" src="asset/Performance.png" alt="Performance"/>
+  </p>
+- Radar Analysis on LaSOT and LaSOT_ext
+  <p align="center">
+  <img width="49%" src="asset/lasot_radar_plot_v2.png" alt="LaSOT_Radar"/>
+  <img width="49%" src="asset/lasot_radar_plot_v2.png" alt="LaSOT_ext_Radar"/>
   </p>
 - Speed, MACs, Params (Test on 1080Ti)
   <p align="center">
