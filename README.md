@@ -55,7 +55,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 - Radar Analysis on LaSOT and LaSOT_ext
   <p align="center">
   <img width="49%" src="asset/lasot_radar_plot_v2.png" alt="LaSOT_Radar"/>
-  <img width="49%" src="asset/lasot_radar_plot_v2.png" alt="LaSOT_ext_Radar"/>
+  <img width="49%" src="asset/lasot_ext_radar_plot.png" alt="LaSOT_ext_Radar"/>
   </p>
 - Speed, MACs, Params (Test on 1080Ti)
   <p align="center">
