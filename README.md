@@ -10,6 +10,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
 
+<!-- 
 <style>
 .center 
 {
@@ -37,29 +38,29 @@ table th:nth-of-type(5) {
     width: 6cm;
 }
 </style>
+ -->
 
-<div class="center">
+<!-- <div class="center"> -->
 
 |             Variant             |             ROMTrack             |           ROMTrack-384           |
 | :-----------------------------: | :------------------------------: | :------------------------------: |
 |          Model Setting          |             ViT-Base             |             ViT-Base             |
 |        Pretrained Method        |                MAE               |                MAE               |
 |        Template / Search        |         128×128 / 256×256        |         192×192 / 384×384        |
-| GOT-10k (AO / SR 0.5 / SR 0.75) |        72.9 / 82.9 / 70.2        |        74.2 / 84.3 / 72.4        |
+| <div style="width: 8cm">GOT-10k (AO / SR 0.5 / SR 0.75)</div> |        <div style="width: 6cm">72.9 / 82.9 / 70.2</div>        |        <div style="width: 6cm">74.2 / 84.3 / 72.4</div>        |
 |    LaSOT (AUC / Norm P / P)     |        69.3 / 78.8 / 75.6        |        71.4 / 81.4 / 78.2        |
 | TrackingNet (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
 |  LaSOT_ext (AUC / Norm P / P)   |        48.9 / 59.3 / 55.0        |        51.3 / 62.4 / 58.6        |
 |    TNL2K (AUC / Norm P / P)     |        56.9 / 73.7 / 58.1        |        58.0 / 75.0 / 59.6        |
 |    FPS / MACs(G) / Params(M)    |         101 / 34.5 / 92.1        |          66 / 77.7 / 92.1        |
 
-</div>
-<p align="center">Table 1: Overall Performance.</p>
+<!-- </div> -->
 
 ## :newspaper: News
 **[March 25, 2024]**
 - We upgrade the implementation to Python 3.8 and PyTorch 2.2.0!
 - We update results on TNL2K!
-- We update FPS metrics on RTX A6000 GPU, results are shown in Table 1 for reference.
+- We update FPS metrics on RTX A6000 GPU for reference.
 
 **[March 21, 2024]**
 - We update 2 radar plots for visualization on LaSOT and LaSOT_ext.
