@@ -11,6 +11,9 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
 
 ## :newspaper: News
+**[March 25, 2024]**
+- We upgrade the implementation to Python 3.8 and PyTorch 2.2.0!
+
 **[March 21, 2024]**
 - We update 2 radar plots for visualization on LaSOT and LaSOT_ext.
 - We post a blog on [Zhihu](https://zhuanlan.zhihu.com/p/662351482), welcome for reading.
@@ -27,7 +30,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 - We release Code of ROMTrack.
 
 **[July 14, 2023]**
-- ROMTrack is accepted to **ICCV2023**.
+- ROMTrack is accepted to **ICCV2023**!
 
 ## :calendar: TODO
 - [x] Code for ROMTrack
