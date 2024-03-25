@@ -47,7 +47,7 @@ table th:nth-of-type(5) {
 |          Model Setting          |             ViT-Base             |             ViT-Base             |
 |        Pretrained Method        |                MAE               |                MAE               |
 |        Template / Search        |         128×128 / 256×256        |         192×192 / 384×384        |
-| <div style="width: 8cm">GOT-10k (AO / SR 0.5 / SR 0.75)</div> |        <div style="width: 6cm">72.9 / 82.9 / 70.2</div>        |        <div style="width: 6cm">74.2 / 84.3 / 72.4</div>        |
+| GOT-10k <br> (AO / SR 0.5 / SR 0.75) |        72.9 / 82.9 / 70.2        |        74.2 / 84.3 / 72.4        |
 |    LaSOT (AUC / Norm P / P)     |        69.3 / 78.8 / 75.6        |        71.4 / 81.4 / 78.2        |
 | TrackingNet (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
 |  LaSOT_ext (AUC / Norm P / P)   |        48.9 / 59.3 / 55.0        |        51.3 / 62.4 / 58.6        |
