@@ -48,10 +48,10 @@ table th:nth-of-type(5) {
 |        Pretrained Method        |                MAE               |                MAE               |
 |        Template / Search        |         128×128 / 256×256        |         192×192 / 384×384        |
 | GOT-10k <br> (AO / SR 0.5 / SR 0.75) |        72.9 / 82.9 / 70.2        |        74.2 / 84.3 / 72.4        |
-|    LaSOT (AUC / Norm P / P)     |        69.3 / 78.8 / 75.6        |        71.4 / 81.4 / 78.2        |
-| TrackingNet (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
-|  LaSOT_ext (AUC / Norm P / P)   |        48.9 / 59.3 / 55.0        |        51.3 / 62.4 / 58.6        |
-|    TNL2K (AUC / Norm P / P)     |        56.9 / 73.7 / 58.1        |        58.0 / 75.0 / 59.6        |
+|    LaSOT <br> (AUC / Norm P / P)     |        69.3 / 78.8 / 75.6        |        71.4 / 81.4 / 78.2        |
+| TrackingNet <br> (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
+|  LaSOT_ext <br> (AUC / Norm P / P)   |        48.9 / 59.3 / 55.0        |        51.3 / 62.4 / 58.6        |
+|    TNL2K <br> (AUC / Norm P / P)     |        56.9 / 73.7 / 58.1        |        58.0 / 75.0 / 59.6        |
 |    FPS / MACs(G) / Params(M)    |         101 / 34.5 / 92.1        |          66 / 77.7 / 92.1        |
 
 <!-- </div> -->
