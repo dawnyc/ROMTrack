@@ -10,38 +10,6 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 
 [[Models and Raw Results]](https://drive.google.com/drive/folders/1Q7CpNIhWX05VU7gECnhePu3dKzTV_VoK?usp=drive_link) (Google Drive) [[Models and Raw Results]](https://pan.baidu.com/s/1JsOh_YKPmVAdJwn_XcUg5g) (Baidu Netdisk: romt)
 
-<!-- 
-<style>
-.center 
-{
-  width: auto;
-  display: table;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
-
-<style>
-table th:first-of-type {
-    width: 8cm;
-}
-table th:nth-of-type(2) {
-    width: 6cm;
-}
-table th:nth-of-type(3) {
-    width: 6cm;
-}
-table th:nth-of-type(4) {
-    width: 6cm;
-}
-table th:nth-of-type(5) {
-    width: 6cm;
-}
-</style>
- -->
-
-<!-- <div class="center"> -->
-
 |             Variant             |             ROMTrack             |           ROMTrack-384           |
 | :-----------------------------: | :------------------------------: | :------------------------------: |
 |          Model Setting          |             ViT-Base             |             ViT-Base             |
@@ -52,9 +20,7 @@ table th:nth-of-type(5) {
 | TrackingNet <br> (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
 |  LaSOT_ext <br> (AUC / Norm P / P)   |        48.9 / 59.3 / 55.0        |        51.3 / 62.4 / 58.6        |
 |    TNL2K <br> (AUC / Norm P / P)     |        56.9 / 73.7 / 58.1        |        58.0 / 75.0 / 59.6        |
-|    FPS / MACs(G) / Params(M)    |         101 / 34.5 / 92.1        |          66 / 77.7 / 92.1        |
-
-<!-- </div> -->
+|    FPS / MACs(G) / Params(M)    |         107 / 34.5 / 92.1        |          67 / 77.7 / 92.1        |
 
 ## :newspaper: News
 **[March 25, 2024]**
