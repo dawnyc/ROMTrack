@@ -65,7 +65,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 ## :book: Install the environment
 Use the Anaconda
 ```
-conda create -n romtrack python=3.6
+conda create -n romtrack python=3.8
 conda activate romtrack
 bash install_pytorch17.sh
 ```
