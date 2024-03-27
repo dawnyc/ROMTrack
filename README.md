@@ -14,7 +14,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 | :----------------------------------: | :------------------------------: | :------------------------------: |
 |             Model Setting            |             ViT-Base             |             ViT-Base             |
 |           Pretrained Method          |                MAE               |                MAE               |
-|           Template / Search          |  128$\times$128 / 256$\times$256 |  192$\times$192 / 384$\times$384 |
+|           Template / Search          |         128×128 / 256×256        |         192×192 / 384×384        |
 | GOT-10k <br> (AO / SR 0.5 / SR 0.75) |        72.9 / 82.9 / 70.2        |        74.2 / 84.3 / 72.4        |
 |    LaSOT <br> (AUC / Norm P / P)     |        69.3 / 78.8 / 75.6        |        71.4 / 81.4 / 78.2        |
 | TrackingNet <br> (AUC / Norm P / P)  |        83.6 / 88.4 / 82.7        |        84.1 / 89.0 / 83.7        |
@@ -165,16 +165,5 @@ If our work is useful for your research, please feel free to star :star: and cit
     month     = {October},
     year      = {2023},
     pages     = {9589-9600}
-}
-
-@article{DBLP:journals/corr/abs-2308-05140,
-  author       = {Yidong Cai and
-                  Jie Liu and
-                  Jie Tang and
-                  Gangshan Wu},
-  title        = {Robust Object Modeling for Visual Tracking},
-  journal      = {CoRR},
-  volume       = {abs/2308.05140},
-  year         = {2023}
 }
 ```
