@@ -3,6 +3,7 @@ from torch.utils.data.distributed import DistributedSampler
 # datasets related
 from lib.train.dataset import Lasot, Got10k, MSCOCOSeq, ImagenetVID, TrackingNet
 from lib.train.dataset import Lasot_lmdb, Got10k_lmdb, MSCOCOSeq_lmdb, ImagenetVID_lmdb, TrackingNet_lmdb
+from lib.train.dataset.tnl2k import Tnl2k
 from lib.train.data import sampler, opencv_loader, processing, LTRLoader
 import lib.train.data.transforms as tfm
 from lib.utils.misc import is_main_process
@@ -22,13 +23,14 @@ def update_settings(settings, cfg):
     settings.print_stats = None
     settings.batchsize = cfg.TRAIN.BATCH_SIZE
     settings.scheduler_type = cfg.TRAIN.SCHEDULER.TYPE
+    settings.patch_size = cfg.MODEL.PATCH_SIZE
 
 
 def names2datasets(name_list: list, settings, image_loader):
     assert isinstance(name_list, list)
     datasets = []
     for name in name_list:
-        assert name in ["LASOT", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "COCO17", "VID", "TRACKINGNET", "GOT10K_official_val"]
+        assert name in ["LASOT", "GOT10K_vottrain", "GOT10K_votval", "GOT10K_train_full", "COCO17", "VID", "TRACKINGNET", "GOT10K_official_val", "TNL2K"]
         if name == "LASOT":
             if settings.use_lmdb:
                 print("Building lasot dataset from lmdb")
@@ -77,6 +79,11 @@ def names2datasets(name_list: list, settings, image_loader):
             else:
                 # raise ValueError("NOW WE CAN ONLY USE TRACKINGNET FROM LMDB")
                 datasets.append(TrackingNet(settings.env.trackingnet_dir, image_loader=image_loader))
+        if name == "TNL2K":
+            if settings.use_lmdb:
+                raise ValueError("Not implement")
+            else:
+                datasets.append(Tnl2k(settings.env.tnl2k_dir, split=None, image_loader=image_loader))
     return datasets
 
 
@@ -157,8 +164,9 @@ def build_dataloaders(cfg, settings):
 
 def get_optimizer_scheduler(net, cfg):
     train_score = getattr(cfg.TRAIN, "TRAIN_SCORE", False)
-    freeze_stage0 = getattr(cfg.TRAIN, "FREEZE_STAGE0", False)
-    # freeze_stage0 = True
+    freeze_part = getattr(cfg.TRAIN, "FREEZE_PART", False)
+    num_layers = getattr(cfg.TRAIN, "NUM_LAYERS", 8)
+
     if train_score:
         print("Only training score_branch. Learnable parameters are shown below.")
         param_dicts = [
@@ -171,22 +179,29 @@ def get_optimizer_scheduler(net, cfg):
             else:
                 if is_main_process():
                     print(n)
-    elif freeze_stage0:
-        print("Freeze Stage0 of backbone.")
+    elif freeze_part:
+        print(f"Freeze First {num_layers} layers for Huge Model. Learnable parameters are shown below.")
+        for n, p in net.named_parameters():
+            if 'patch_embed' in n:
+                p.requires_grad = False
+            else:
+                index = -1
+                for num in range(num_layers):
+                    if f'blocks.{num}.' in n:
+                        index = num
+                if index == -1:
+                    if is_main_process():
+                        print(n)
+                else:
+                    p.requires_grad = False
+        
         param_dicts = [
-            {"params": [p for n, p in net.named_parameters() if "backbone" not in n and p.requires_grad]},
+            {"params": [p for n, p in net.named_parameters() if "head" in n and p.requires_grad]},
             {
-                "params": [p for n, p in net.named_parameters() if (("stage2" in n or "stage1" in n) and p.requires_grad)],
+                "params": [p for n, p in net.named_parameters() if "head" not in n and p.requires_grad],
                 "lr": cfg.TRAIN.LR * cfg.TRAIN.BACKBONE_MULTIPLIER,
             },
         ]
-
-        for n, p in net.named_parameters():
-            if "stage2" not in n and "box_head" not in n and "stage1" not in n:
-                p.requires_grad = False
-            else:
-                if is_main_process():
-                    print(n)
     else:
         param_dicts = [
             {"params": [p for n, p in net.named_parameters() if "head" in n and p.requires_grad]},

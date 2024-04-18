@@ -9,7 +9,14 @@ def parameters(yaml_name: str, model=None, search_area_scale=None):
     prj_dir = env_settings().prj_dir
     save_dir = env_settings().save_dir
     # update default config from yaml file
-    yaml_file = os.path.join(prj_dir, 'experiments/ROMTrack/%s.yaml' % yaml_name)
+    script_name = 'ROMTrack'
+    if 'tiny' in yaml_name:
+        script_name += '-Tiny'
+    elif 'small' in yaml_name:
+        script_name += '-Small'
+    else:
+        script_name += '-Base'
+    yaml_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, yaml_name))
     update_config_from_file(yaml_file)
     params.cfg = cfg
     print("test config: ", cfg)

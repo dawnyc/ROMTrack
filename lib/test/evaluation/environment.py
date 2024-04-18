@@ -22,6 +22,7 @@ class EnvSettings:
         self.davis_dir = ''
         self.youtubevos_dir = ''
         self.vot20_path = ''
+        self.tnl2k_path = ''
 
         self.got_packed_results_path = ''
         self.got_reports_path = ''
@@ -77,6 +78,7 @@ class EnvSettings_ITP:
         self.davis_dir = ''
         self.youtubevos_dir = ''
         self.vot20_path = os.path.join(data_dir, 'vot2020')
+        self.tnl2k_path = os.path.join(data_dir, 'TNL2K_test')
 
         self.got_packed_results_path = ''
         self.got_reports_path = ''

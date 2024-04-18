@@ -11,7 +11,7 @@ from torch.cuda.amp import GradScaler
 
 
 class LTRTrainer(BaseTrainer):
-    def __init__(self, actor, loaders, optimizer, settings, lr_scheduler=None, use_amp=False):
+    def __init__(self, actor, loaders, optimizer, settings, lr_scheduler=None, use_amp=False, accumulation=1):
         """
         args:
             actor - The actor for training the network
@@ -28,18 +28,27 @@ class LTRTrainer(BaseTrainer):
         # Initialize statistics variables
         self.stats = OrderedDict({loader.name: None for loader in self.loaders})
 
-        # Initialize tensorboard
-        if settings.local_rank in [-1, 0]:
-            tensorboard_writer_dir = os.path.join(self.settings.env.tensorboard_dir, self.settings.project_path)
-            if not os.path.exists(tensorboard_writer_dir):
-                os.makedirs(tensorboard_writer_dir)
-            self.tensorboard_writer = TensorboardWriter(tensorboard_writer_dir, [l.name for l in loaders])
+        # # Initialize tensorboard
+        # if settings.local_rank in [-1, 0]:
+        #     tensorboard_writer_dir = os.path.join(self.settings.env.tensorboard_dir, self.settings.project_path)
+        #     if not os.path.exists(tensorboard_writer_dir):
+        #         os.makedirs(tensorboard_writer_dir)
+        #     self.tensorboard_writer = TensorboardWriter(tensorboard_writer_dir, [l.name for l in loaders])
+        
+        # Initialize tensorboard on all gpus
+        self.tensorboard_writer_list = {}
+        tensorboard_writer_dir = os.path.join(self.settings.env.tensorboard_dir, self.settings.project_path)
+        tensorboard_writer_dir = os.path.join(tensorboard_writer_dir, f"rank[{self.settings.local_rank}]")
+        if not os.path.exists(tensorboard_writer_dir):
+            os.makedirs(tensorboard_writer_dir)
+        self.tensorboard_writer_list[self.settings.local_rank] = TensorboardWriter(tensorboard_writer_dir, [l.name for l in loaders])
 
         self.move_data_to_gpu = getattr(settings, 'move_data_to_gpu', True)
         self.settings = settings
         self.use_amp = use_amp
         if use_amp:
             self.scaler = GradScaler()
+        self.accumulation = accumulation
 
     def _set_default_settings(self):
         # Dict of all default values
@@ -72,22 +81,30 @@ class LTRTrainer(BaseTrainer):
             else:
                 with autocast():
                     loss, stats = self.actor(data)
+            
+            loss /= self.accumulation
 
             # backward pass and update weights
             if loader.training:
-                self.optimizer.zero_grad()
+                # self.optimizer.zero_grad()
                 if not self.use_amp:
                     loss.backward()
-                    if self.settings.grad_clip_norm > 0:
-                        torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
-                    self.optimizer.step()
+                    if (i + 1) % self.accumulation == 0:
+                        if self.settings.grad_clip_norm > 0:
+                            torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
+                        self.optimizer.step()
                 else:
                     self.scaler.scale(loss).backward()
-                    self.scaler.unscale_(self.optimizer)
-                    if self.settings.grad_clip_norm > 0:
-                        torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
-                    self.scaler.step(self.optimizer)
-                    self.scaler.update()
+                    if (i + 1) % self.accumulation == 0:    
+                        self.scaler.unscale_(self.optimizer)
+                        if self.settings.grad_clip_norm > 0:
+                            torch.nn.utils.clip_grad_norm_(self.actor.net.parameters(), self.settings.grad_clip_norm)
+                        self.scaler.step(self.optimizer)
+                        self.scaler.update()
+            
+            if (i + 1) % self.accumulation == 0:
+                self.optimizer.zero_grad()
+            torch.cuda.synchronize()
 
             # update statistics
             batch_size = data['template_images'].shape[loader.stack_dim]
@@ -106,8 +123,9 @@ class LTRTrainer(BaseTrainer):
                 self.cycle_dataset(loader)
 
         self._stats_new_epoch()
-        if self.settings.local_rank in [-1, 0]:
-            self._write_tensorboard()
+        # if self.settings.local_rank in [-1, 0]:
+        #     self._write_tensorboard()
+        self._write_tensorboard_new()
 
     def _init_timing(self):
         self.num_frames = 0
@@ -178,3 +196,9 @@ class LTRTrainer(BaseTrainer):
             self.tensorboard_writer.write_info(self.settings.script_name, self.settings.description)
 
         self.tensorboard_writer.write_epoch(self.stats, self.epoch)
+
+    def _write_tensorboard_new(self):
+        if self.epoch == 1:
+            self.tensorboard_writer_list[self.settings.local_rank].write_info(self.settings.script_name, self.settings.description)
+
+        self.tensorboard_writer_list[self.settings.local_rank].write_epoch(self.stats, self.epoch)

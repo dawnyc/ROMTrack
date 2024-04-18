@@ -241,11 +241,10 @@ class CenterPredictor(nn.Module, ):
         return _sigmoid(score_map_ctr), _sigmoid(score_map_size), score_map_offset
 
 
-def build_box_head(cfg):
+def build_box_head(cfg, stride=16):
     if cfg.MODEL.HEAD_TYPE == "MLP":
         raise ValueError("HEAD TYPE %s is not supported." % cfg.MODEL.HEAD_TYPE)
     elif "CORNER" in cfg.MODEL.HEAD_TYPE:
-        stride = 16
         feat_sz = int(cfg.DATA.SEARCH.SIZE / stride)
         channel = getattr(cfg.MODEL, "HEAD_CHANNEL", 256)
         freeze_bn = getattr(cfg.MODEL, "HEAD_FREEZE_BN", False)
@@ -257,7 +256,6 @@ def build_box_head(cfg):
             raise ValueError()
         return corner_head
     elif "CENTER" in cfg.MODEL.HEAD_TYPE:
-        stride = 16
         feat_sz = int(cfg.DATA.SEARCH.SIZE / stride)
         channel = getattr(cfg.MODEL, "HEAD_CHANNEL", 256)
         freeze_bn = getattr(cfg.MODEL, "HEAD_FREEZE_BN", False)

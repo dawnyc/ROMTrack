@@ -7,6 +7,8 @@ from torch.utils.data.distributed import DistributedSampler
 
 import math
 
+from lib.utils.misc import is_main_process
+
 
 class BaseTrainer:
     """Base trainer class. Contains functions for training and saving/loading checkpoints.
@@ -87,12 +89,8 @@ class BaseTrainer:
                     self.epoch = epoch
 
                     self.train_epoch()
-                    if self.settings.local_rank in [-1, 0]:
-                        for n, p in self.actor.net.named_parameters():
-                            if n == 'module.alpha':
-                                print(n)
-                                print(p)
-                                break
+                    # to synchronize all gpus
+                    torch.distributed.barrier()
 
                     if self.lr_scheduler is not None:
                         if self.settings.scheduler_type != 'cosine':
@@ -113,7 +111,7 @@ class BaseTrainer:
                     # only save the last 10 checkpoints
                     save_every_epoch = getattr(self.settings, "save_every_epoch", False)
                     # if epoch > (max_epochs - 10) or save_every_epoch or epoch % 5 == 0 or epoch == 1:
-                    if epoch % 10 == 0 or epoch == max_epochs:
+                    if epoch % 20 == 0 or epoch == max_epochs:
                         if self._checkpoint_dir:
                             if self.settings.local_rank in [-1, 0]:
                                 self.save_checkpoint()
@@ -237,8 +235,12 @@ class BaseTrainer:
             if key in ignore_fields:
                 continue
             if key == 'net':
-                net.load_state_dict(checkpoint_dict[key], strict=False)
-                # net.load_state_dict(checkpoint_dict[key])
+                # if is_main_process():
+                #     print("Loading params from checkpoint:")
+                #     for k in checkpoint_dict[key].keys():
+                #         print(k)
+                # net.load_state_dict(checkpoint_dict[key], strict=False)
+                net.load_state_dict(checkpoint_dict[key])
             elif key == 'optimizer':
                 self.optimizer.load_state_dict(checkpoint_dict[key])
             else:

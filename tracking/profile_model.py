@@ -60,7 +60,15 @@ if __name__ == "__main__":
     args = parse_args()
     '''update cfg'''
     prj_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    yaml_fname = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (args.script, args.config))
+    script_name = args.script
+    yaml_name = args.config
+    if 'tiny' in yaml_name:
+        script_name += '-Tiny'
+    elif 'small' in yaml_name:
+        script_name += '-Small'
+    else:
+        script_name += '-Base'
+    yaml_fname = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, args.config))
     print("yaml_fname: {}".format(yaml_fname))
     config_module = importlib.import_module('lib.config.%s.config' % args.script)
     cfg = config_module.cfg
@@ -73,11 +81,19 @@ if __name__ == "__main__":
     '''import ROMTrack network module'''
     model_module = importlib.import_module('lib.models.ROMTrack')
     if args.script == "ROMTrack":
-        model_constructor = model_module.build_vit
+        if "tiny" in args.config:
+            model_constructor = model_module.build_vit_tiny
+        elif "small" in args.config:
+            model_constructor = model_module.build_vit_small
+        elif "baseline" in args.config:
+            model_constructor = model_module.build_vit_base
         model = model_constructor(cfg)
+        # model = model.half()
         # get the template and search
         template = get_data(bs, z_sz)
+        # template = template.type(torch.HalfTensor)
         search = get_data(bs, x_sz)
+        # search = search.type(torch.HalfTensor)
         # transfer to device
         model = model.to(device)
         template = template.to(device)

@@ -1,0 +1,1328 @@
+{
+    "att_name_long": [
+        "Illumination Variation",
+        "Partial Occlusion",
+        "Deformation",
+        "Motion Blur",
+        "Camera Motion",
+        "Rotation",
+        "Background Clutter",
+        "Viewpoint Change",
+        "Scale Variation",
+        "Full Occlusion",
+        "Fast Motion",
+        "Out-of-View",
+        "Low Resolution",
+        "Aspect Ratio Change"
+    ],
+    "att_name_short": [
+        "IV",
+        "POC",
+        "DEF",
+        "MB",
+        "CM",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "atv-1": [
+        "ROT",
+        "VC",
+        "SV"
+    ],
+    "atv-2": [
+        "CM",
+        "VC",
+        "SV"
+    ],
+    "atv-3": [
+        "IV",
+        "MB",
+        "CM",
+        "VC",
+        "SV"
+    ],
+    "atv-4": [
+        "CM",
+        "VC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "atv-5": [
+        "POC",
+        "ROT",
+        "VC",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "atv-6": [
+        "IV",
+        "POC",
+        "CM",
+        "VC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "atv-7": [
+        "POC",
+        "CM",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "ARC"
+    ],
+    "atv-8": [
+        "POC",
+        "ROT",
+        "VC",
+        "SV",
+        "FM",
+        "ARC"
+    ],
+    "atv-9": [
+        "POC",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "atv-10": [
+        "POC",
+        "ROT",
+        "VC",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-1": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-2": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "badminton-3": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-4": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-5": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "badminton-6": [
+        "POC",
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "badminton-7": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-8": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-9": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "badminton-10": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "cosplay-1": [
+        "POC",
+        "DEF",
+        "MB",
+        "ROT",
+        "SV",
+        "ARC"
+    ],
+    "cosplay-10": [
+        "POC",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "cosplay-2": [
+        "POC",
+        "DEF",
+        "ROT",
+        "SV",
+        "ARC"
+    ],
+    "cosplay-3": [
+        "POC",
+        "DEF",
+        "ROT",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "cosplay-4": [
+        "IV",
+        "POC",
+        "DEF",
+        "ROT",
+        "SV"
+    ],
+    "cosplay-5": [
+        "POC",
+        "DEF",
+        "ROT",
+        "SV"
+    ],
+    "cosplay-6": [
+        "DEF",
+        "ROT",
+        "ARC"
+    ],
+    "cosplay-7": [
+        "POC",
+        "DEF",
+        "ROT",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "cosplay-8": [
+        "POC",
+        "DEF",
+        "ROT",
+        "BC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "cosplay-9": [
+        "IV",
+        "DEF",
+        "ROT",
+        "SV"
+    ],
+    "dancingshoe-1": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-2": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-3": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-4": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-5": [
+        "POC",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-6": [
+        "POC",
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-7": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-8": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-9": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "dancingshoe-10": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "VC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-1": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-2": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR"
+    ],
+    "footbag-3": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-4": [
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-5": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-6": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-7": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-8": [
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "footbag-9": [
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "footbag-10": [
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-1": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-2": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-3": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-4": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-5": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-6": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-7": [
+        "POC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-8": [
+        "IV",
+        "POC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-9": [
+        "POC",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "frisbee-10": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-1": [
+        "POC",
+        "DEF",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-2": [
+        "POC",
+        "DEF",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-3": [
+        "IV",
+        "POC",
+        "DEF",
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-4": [
+        "MB",
+        "BC",
+        "ARC"
+    ],
+    "jianzi-5": [
+        "POC",
+        "MB",
+        "CM",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-6": [
+        "MB",
+        "ROT",
+        "SV",
+        "ARC"
+    ],
+    "jianzi-7": [
+        "POC",
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-8": [
+        "POC",
+        "DEF",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-9": [
+        "POC",
+        "ROT",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "jianzi-10": [
+        "POC",
+        "DEF",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "lantern-1": [
+        "POC",
+        "MB",
+        "CM",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "lantern-2": [
+        "BC",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "lantern-3": [
+        "POC",
+        "BC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ],
+    "lantern-4": [
+        "POC",
+        "BC",
+        "SV",
+        "LR"
+    ],
+    "lantern-5": [
+        "BC",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "lantern-6": [
+        "IV",
+        "POC",
+        "BC",
+        "FOC",
+        "LR"
+    ],
+    "lantern-7": [
+        "IV",
+        "POC",
+        "BC",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "lantern-8": [
+        "SV",
+        "LR"
+    ],
+    "lantern-9": [
+        "IV",
+        "SV",
+        "LR"
+    ],
+    "lantern-10": [
+        "IV",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "misc-1": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR"
+    ],
+    "misc-2": [
+        "POC",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "misc-3": [
+        "POC",
+        "DEF",
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "misc-4": [
+        "POC",
+        "BC",
+        "FOC",
+        "FM",
+        "LR"
+    ],
+    "misc-5": [
+        "DEF",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "misc-6": [
+        "IV",
+        "POC",
+        "BC",
+        "SV",
+        "OV",
+        "ARC"
+    ],
+    "misc-7": [
+        "ROT",
+        "VC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "misc-8": [
+        "POC",
+        "MB",
+        "ROT",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "misc-9": [
+        "ROT",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "misc-10": [
+        "POC",
+        "ROT",
+        "BC",
+        "SV",
+        "ARC"
+    ],
+    "opossum-1": [
+        "POC",
+        "DEF",
+        "MB",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "ARC"
+    ],
+    "opossum-2": [
+        "POC",
+        "DEF",
+        "MB",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "opossum-3": [
+        "POC",
+        "DEF",
+        "MB",
+        "BC",
+        "SV",
+        "ARC"
+    ],
+    "opossum-4": [
+        "POC",
+        "DEF",
+        "SV",
+        "ARC"
+    ],
+    "opossum-5": [
+        "POC",
+        "DEF",
+        "SV",
+        "ARC"
+    ],
+    "opossum-6": [
+        "POC",
+        "DEF",
+        "MB",
+        "BC",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "opossum-7": [
+        "IV",
+        "DEF",
+        "SV",
+        "ARC"
+    ],
+    "opossum-8": [
+        "POC",
+        "DEF",
+        "BC",
+        "SV"
+    ],
+    "opossum-9": [
+        "POC",
+        "DEF",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "opossum-10": [
+        "POC",
+        "DEF"
+    ],
+    "paddle-1": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-2": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-3": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "OV",
+        "ARC"
+    ],
+    "paddle-4": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-5": [
+        "POC",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-6": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-7": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-8": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "paddle-9": [
+        "POC",
+        "MB",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "paddle-10": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "raccoon-1": [
+        "POC",
+        "DEF",
+        "MB",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "raccoon-2": [
+        "POC",
+        "DEF",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "raccoon-3": [
+        "POC",
+        "DEF",
+        "BC",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "raccoon-4": [
+        "IV",
+        "POC",
+        "DEF",
+        "VC",
+        "SV",
+        "FOC",
+        "ARC"
+    ],
+    "raccoon-5": [
+        "POC",
+        "DEF",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "raccoon-6": [
+        "DEF",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "raccoon-7": [
+        "DEF",
+        "BC",
+        "VC",
+        "ARC"
+    ],
+    "raccoon-8": [
+        "POC",
+        "DEF",
+        "BC",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "raccoon-9": [
+        "DEF",
+        "CM"
+    ],
+    "raccoon-10": [
+        "POC",
+        "DEF",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ],
+    "rhino-1": [
+        "POC",
+        "DEF",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "rhino-2": [
+        "DEF",
+        "VC",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "rhino-3": [
+        "BC"
+    ],
+    "rhino-4": [
+        "POC",
+        "BC",
+        "SV"
+    ],
+    "rhino-5": [
+        "DEF",
+        "CM",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "rhino-6": [
+        "DEF",
+        "BC"
+    ],
+    "rhino-7": [
+        "ROT",
+        "SV",
+        "ARC"
+    ],
+    "rhino-8": [
+        "IV",
+        "POC",
+        "DEF",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "rhino-9": [
+        "DEF",
+        "SV",
+        "ARC"
+    ],
+    "rhino-10": [
+        "POC",
+        "DEF",
+        "VC",
+        "SV",
+        "OV",
+        "ARC"
+    ],
+    "skatingshoe-1": [
+        "POC",
+        "MB",
+        "BC",
+        "VC",
+        "SV",
+        "LR"
+    ],
+    "skatingshoe-2": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-3": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "OV",
+        "ARC"
+    ],
+    "skatingshoe-4": [
+        "ROT",
+        "BC",
+        "SV",
+        "ARC"
+    ],
+    "skatingshoe-5": [
+        "POC",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-6": [
+        "POC",
+        "BC",
+        "SV",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-7": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-8": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "OV",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-9": [
+        "POC",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ],
+    "skatingshoe-10": [
+        "POC",
+        "MB",
+        "ROT",
+        "BC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-1": [
+        "CM",
+        "VC",
+        "SV",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-2": [
+        "POC",
+        "BC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-3": [
+        "CM",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR"
+    ],
+    "wingsuit-4": [
+        "CM",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-5": [
+        "POC",
+        "CM",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-6": [
+        "CM",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-7": [
+        "CM",
+        "ROT",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-8": [
+        "POC",
+        "CM",
+        "VC",
+        "SV",
+        "ARC"
+    ],
+    "wingsuit-9": [
+        "POC",
+        "CM",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "FM",
+        "LR",
+        "ARC"
+    ],
+    "wingsuit-10": [
+        "CM",
+        "BC",
+        "VC",
+        "SV",
+        "FOC",
+        "LR",
+        "ARC"
+    ]
+}

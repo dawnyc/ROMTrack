@@ -1,6 +1,6 @@
 import os
 # loss function related
-from lib.utils.box_ops import giou_loss
+from lib.utils.box_ops import giou_loss, ciou_loss, siou_loss
 from torch.nn.functional import l1_loss
 from torch.nn import BCEWithLogitsLoss
 # train pipeline related
@@ -10,7 +10,8 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 # some more advanced functions
 from .base_functions import *
 # network related
-from lib.models.ROMTrack import build_vit
+from lib.models.ROMTrack import build_vit_tiny, build_vit_small
+from lib.models.ROMTrack import build_vit_base
 # forward propagation related
 from lib.train.actors import ROMTrackActor
 # for import modules
@@ -56,7 +57,12 @@ def run(settings):
 
     # Create network
     if settings.script_name == "ROMTrack":
-        net = build_vit(cfg)
+        if 'tiny' in settings.config_name:
+            net = build_vit_tiny(cfg)
+        elif 'small' in settings.config_name:
+            net = build_vit_small(cfg)
+        else:
+            net = build_vit_base(cfg)
         print("building vit without score")
     else:
         raise ValueError("illegal script name")
@@ -75,8 +81,10 @@ def run(settings):
     # Loss functions and Actors
     if settings.script_name == 'ROMTrack':
         focal_loss = FocalLoss()
-        objective = {'giou': giou_loss, 'l1': l1_loss, 'focal': focal_loss}
-        loss_weight = {'giou': cfg.TRAIN.GIOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'focal': cfg.TRAIN.FOCAL_WEIGHT}
+        # objective = {'iou': giou_loss, 'l1': l1_loss, 'focal': focal_loss}
+        # objective = {'iou': ciou_loss, 'l1': l1_loss, 'focal': focal_loss}
+        objective = {'iou': siou_loss, 'l1': l1_loss, 'focal': focal_loss}
+        loss_weight = {'iou': cfg.TRAIN.IOU_WEIGHT, 'l1': cfg.TRAIN.L1_WEIGHT, 'focal': cfg.TRAIN.FOCAL_WEIGHT}
         actor = ROMTrackActor(net=net, objective=objective, loss_weight=loss_weight,
                               settings=settings, stage=cfg.TRAIN.STAGE)
     else:
@@ -85,7 +93,10 @@ def run(settings):
     # Optimizer, parameters, and learning rates
     optimizer, lr_scheduler = get_optimizer_scheduler(net, cfg)
     use_amp = getattr(cfg.TRAIN, "AMP", False)
-    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, lr_scheduler, use_amp=use_amp)
+    accumulation = getattr(cfg.TRAIN, "ACCUMULATION", 1)
+    print("use_amp =", use_amp)
+    print("accumulation =", accumulation)
+    trainer = LTRTrainer(actor, [loader_train, loader_val], optimizer, settings, lr_scheduler, use_amp=use_amp, accumulation=accumulation)
 
     # train process
     trainer.train(cfg.TRAIN.EPOCH, load_latest=True, fail_safe=True)

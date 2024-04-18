@@ -19,6 +19,7 @@ dataset_dict = dict(
     lasot=DatasetInfo(module=pt % "lasot", class_name="LaSOTDataset", kwargs=dict()),
     lasot_lmdb=DatasetInfo(module=pt % "lasot_lmdb", class_name="LaSOTlmdbDataset", kwargs=dict()),
     lasot_ext=DatasetInfo(module=pt % "lasotextensionsubset", class_name="LaSOTExtensionSubsetDataset", kwargs=dict()),
+    tnl2k=DatasetInfo(module=pt % "tnl2k", class_name="TNL2KDataset", kwargs=dict()),
     vot20=DatasetInfo(module=pt % "vot", class_name="VOTDataset", kwargs=dict(year=20))
 )
 

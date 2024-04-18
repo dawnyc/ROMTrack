@@ -59,6 +59,12 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
     settings.save_dir = os.path.abspath(save_dir)
     settings.use_lmdb = use_lmdb
     prj_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    if 'tiny' in config_name:
+        script_name += '-Tiny'
+    elif 'small' in config_name:
+        script_name += '-Small'
+    else:
+        script_name += '-Base'
     settings.cfg_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, config_name))
     if distill:
         settings.distill = distill
@@ -100,6 +106,7 @@ def main():
     else:
         torch.cuda.set_device(0)
         args.local_rank = -1
+
     run_training(args.script, args.config, cudnn_benchmark=args.cudnn_benchmark,
                  local_rank=args.local_rank, save_dir=args.save_dir, base_seed=args.seed,
                  use_lmdb=args.use_lmdb, script_name_prv=args.script_prv, config_name_prv=args.config_prv,

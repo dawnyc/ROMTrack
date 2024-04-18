@@ -1,7 +1,7 @@
 import importlib
 import os
 from collections import OrderedDict
-from lib.test.evaluation.environment import env_settings
+from lib.test.pytracking.evaluation.environment import env_settings
 import time
 import cv2 as cv
 
@@ -49,7 +49,10 @@ class Tracker:
         else:
             self.results_dir = '{}/{}/{}_{}'.format(env.results_path, self.name, self.parameter_name, self.run_id)
         if result_only:
-            self.results_dir = '{}/{}'.format(env.results_path, self.name)
+            if self.run_id is None:
+                self.results_dir = '{}/{}'.format(env.results_path, self.name)
+            else:
+                self.results_dir = '{}/{}/{}'.format(env.results_path, self.name, self.run_id)
 
         tracker_module_abspath = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                               '..', 'tracker', '%s.py' % self.name))
@@ -62,7 +65,7 @@ class Tracker:
         self.params = self.get_parameters(tracker_params)
 
     def create_tracker(self, params):
-        tracker = self.tracker_class(params, self.parameter_name, self.dataset_name)
+        tracker = self.tracker_class(params, self.dataset_name)
         return tracker
 
     def run_sequence(self, seq, debug=None):
@@ -275,6 +278,8 @@ class Tracker:
 
     def get_parameters(self, tracker_params=None):
         """Get parameters."""
+        if tracker_params is None:
+            return None
         param_module = importlib.import_module('lib.test.parameter.{}'.format(self.name))
         search_area_scale = None
         if tracker_params is not None and 'search_area_scale' in tracker_params:
@@ -296,6 +301,3 @@ class Tracker:
             return decode_img(image_file[0], image_file[1])
         else:
             raise ValueError("type of image_file should be str or list")
-
-
-

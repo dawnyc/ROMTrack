@@ -38,6 +38,7 @@ def interpolate_pos_embed(model, checkpoint_model):
     if 'pos_embed' in checkpoint_model:
         pos_embed_checkpoint = checkpoint_model['pos_embed']
         embedding_size = pos_embed_checkpoint.shape[-1]  # 768
+
         # for template
         num_patches_t = model.patch_embed_t.num_patches  # 8*8=64
         num_extra_tokens_t = model.pos_embed_t.shape[-2] - num_patches_t + 1  # need to drop cls_token
@@ -58,6 +59,10 @@ def interpolate_pos_embed(model, checkpoint_model):
             # new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
             new_pos_embed = pos_tokens
             checkpoint_model['pos_embed_t'] = new_pos_embed
+        else:
+            print("Template Position %dx%d to %dx%d, no need to interpolate" % (orig_size, orig_size, new_size, new_size))
+            checkpoint_model['pos_embed_t'] = pos_embed_checkpoint[:, num_extra_tokens_t:]
+
         # for search
         num_patches_s = model.patch_embed_s.num_patches  # 16*16=256
         num_extra_tokens_s = model.pos_embed_s.shape[-2] - num_patches_s + 1  # need to drop cls_token
@@ -77,6 +82,9 @@ def interpolate_pos_embed(model, checkpoint_model):
             # new_pos_embed = torch.cat((extra_tokens, pos_tokens), dim=1)
             new_pos_embed = pos_tokens
             checkpoint_model['pos_embed_s'] = new_pos_embed
+        else:
+            print("Search Position %dx%d to %dx%d, no need to interpolate" % (orig_size, orig_size, new_size, new_size))
+            checkpoint_model['pos_embed_t'] = pos_embed_checkpoint[:, num_extra_tokens_s:]
 
 
 class PatchEmbed(nn.Module):
@@ -204,9 +212,9 @@ class Attention(nn.Module):
         x = torch.cat([t, it, s], dim=1)
         x = self.proj(x)
         x = self.proj_drop(x)
-        return x
+        return x, (self.k_vt, self.v_vt, self.k_it, self.v_it)
 
-    def forward_train_fuse_vt(self, x):
+    def forward_train_fuse_vt(self, x, vt_it):
         B, N, C = x.shape
         qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
         # B, num_heads, N, C//num_heads
@@ -214,6 +222,8 @@ class Attention(nn.Module):
 
         k_t, k_s = torch.split(k, [self.t_size, self.s_size], dim=2)
         v_t, v_s = torch.split(v, [self.t_size, self.s_size], dim=2)
+
+        self.k_vt, self.v_vt, self.k_it, self.v_it = vt_it
 
         # mix attention of t&s to t&it&vt&s
         k = torch.cat([k_t, self.k_it, self.k_vt, k_s], dim=2)
@@ -248,6 +258,25 @@ class Attention(nn.Module):
         x = self.proj(it)
         x = self.proj_drop(x)
         return x
+    
+    def set_online_without_vt(self, x):
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        # B, num_heads, N, C//num_heads
+        q, k, v = qkv.unbind(0)  # make torchscript happy (cannot use tensor as tuple)
+        self.k_it = k
+        self.v_it = v
+
+        # inherent attention of it
+        inh_attn = (q @ k.transpose(-2, -1)) * self.scale
+        inh_attn = inh_attn.softmax(dim=-1)
+        inh_attn = self.attn_drop(inh_attn)
+
+        it = (inh_attn @ v).transpose(1, 2).reshape(B, self.t_size, C)
+
+        x = self.proj(it)
+        x = self.proj_drop(x)
+        return x
 
     def forward_test(self, x):
         B, N, C = x.shape
@@ -263,6 +292,28 @@ class Attention(nn.Module):
         v = torch.cat([v_t, self.v_it, self.v_vt, v_s], dim=2)
         self.k_vt = k_t
         self.v_vt = v_t
+        mix_attn = (q @ k.transpose(-2, -1)) * self.scale
+        mix_attn = mix_attn.softmax(dim=-1)
+        mix_attn = self.attn_drop(mix_attn)
+
+        ts = (mix_attn @ v).transpose(1, 2).reshape(B, self.mix_size, C)
+
+        x = self.proj(ts)
+        x = self.proj_drop(x)
+        return x
+
+    def forward_test_without_vt(self, x):
+        B, N, C = x.shape
+        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+        # B, num_heads, N, C//num_heads
+        q, k, v = qkv.unbind(0)  # make torchscript happy (cannot use tensor as tuple)
+
+        k_t, k_s = torch.split(k, [self.t_size, self.s_size], dim=2)
+        v_t, v_s = torch.split(v, [self.t_size, self.s_size], dim=2)
+
+        # mix attention of t&s to t&it&vt&s
+        k = torch.cat([k_t, self.k_it, k_s], dim=2)
+        v = torch.cat([v_t, self.v_it, v_s], dim=2)
         mix_attn = (q @ k.transpose(-2, -1)) * self.scale
         mix_attn = mix_attn.softmax(dim=-1)
         mix_attn = self.attn_drop(mix_attn)
@@ -344,13 +395,14 @@ class Block(nn.Module):
         return x
 
     def forward_train_generate_variation_token(self, x):
-        x = x + self.drop_path1(self.ls1(self.attn.forward_train_generate_variation_token(self.norm1(x))))
+        tmp_x, vt_it = self.attn.forward_train_generate_variation_token(self.norm1(x))
+        x = x + self.drop_path1(self.ls1(tmp_x))
         x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
 
-        return x
+        return x, vt_it
 
-    def forward_train_fuse_vt(self, x):
-        x = x + self.drop_path1(self.ls1(self.attn.forward_train_fuse_vt(self.norm1(x))))
+    def forward_train_fuse_vt(self, x, vt_it):
+        x = x + self.drop_path1(self.ls1(self.attn.forward_train_fuse_vt(self.norm1(x), vt_it)))
         x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
 
         return x
@@ -363,6 +415,18 @@ class Block(nn.Module):
 
     def forward_test(self, x):
         x = x + self.drop_path1(self.ls1(self.attn.forward_test(self.norm1(x))))
+        x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
+
+        return x
+
+    def set_online_without_vt(self, x):
+        x = x + self.drop_path1(self.ls1(self.attn.set_online_without_vt(self.norm1(x))))
+        x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
+
+        return x
+
+    def forward_test_without_vt(self, x):
+        x = x + self.drop_path1(self.ls1(self.attn.forward_test_without_vt(self.norm1(x))))
         x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
 
         return x
@@ -422,11 +486,11 @@ class VisionTransformer(nn.Module):
         self.grad_checkpointing = False
 
         self.patch_embed_t = embed_layer(
-            img_size=img_size_t, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)
+            img_size=img_size_t, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim, stride=patch_size)
         num_patches_t = self.patch_embed_t.num_patches
 
         self.patch_embed_s = EmptyPatchEmbed(
-            img_size=img_size_s, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)
+            img_size=img_size_s, patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim, stride=patch_size)
         num_patches_s = self.patch_embed_s.num_patches
 
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim)) if self.num_tokens > 0 else None
@@ -437,6 +501,8 @@ class VisionTransformer(nn.Module):
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, depth)]  # stochastic depth decay rule
         t_size = (img_size_t // patch_size) ** 2
         s_size = (img_size_s // patch_size) ** 2
+        self.patch_size = patch_size
+        self.depth = depth
         self.blocks = nn.Sequential(*[
             block_fn(
                 t_size=t_size, s_size=s_size, dim=embed_dim, num_heads=num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias, init_values=init_values,
@@ -458,7 +524,7 @@ class VisionTransformer(nn.Module):
 
         x = self.blocks[curdepth](x)
 
-        if curdepth == 11:
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         return x
@@ -467,7 +533,7 @@ class VisionTransformer(nn.Module):
         t_B, t_C, t_H, t_W = template.shape
         s_B, s_C, s_H, s_W = search.size()
         if curdepth == 0:
-            t_H, t_W, s_H, s_W = t_H // 16, t_W // 16, s_H // 16, s_W // 16
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
         else:
             template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
             inherent_template = rearrange(inherent_template, 'b c h w -> b (h w) c').contiguous()
@@ -486,7 +552,7 @@ class VisionTransformer(nn.Module):
         t_B, t_C, t_H, t_W = template.shape
         s_B, s_C, s_H, s_W = search.size()
         if curdepth == 0:
-            t_H, t_W, s_H, s_W = t_H // 16, t_W // 16, s_H // 16, s_W // 16
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
         else:
             template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
             inherent_template = rearrange(inherent_template, 'b c h w -> b (h w) c').contiguous()
@@ -500,21 +566,21 @@ class VisionTransformer(nn.Module):
             search = self.patch_embed_t(search)
             search = self.pos_drop(search + self.pos_embed_s)
         x = torch.cat([template, inherent_template, search], dim=1)
-        x = self.blocks[curdepth].forward_train_generate_variation_token(x)
-        if curdepth == 11:
+        x, vt_it = self.blocks[curdepth].forward_train_generate_variation_token(x)
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         template, inherent_template, search = torch.split(x, [t_H * t_W, t_H * t_W, s_H * s_W], dim=1)
         template = rearrange(template, 'b (h w) c -> b c h w', h=t_H, w=t_W).contiguous()
         inherent_template = rearrange(inherent_template, 'b (h w) c -> b c h w', h=t_H, w=t_W).contiguous()
         search = rearrange(search, 'b (h w) c -> b c h w', h=s_H, w=s_W).contiguous()
-        return template, inherent_template, search
+        return template, inherent_template, search, vt_it
 
-    def forward_train_fuse_vt(self, template, search, curdepth):
+    def forward_train_fuse_vt(self, template, search, curdepth, vt_it):
         t_B, t_C, t_H, t_W = template.shape
         s_B, s_C, s_H, s_W = search.size()
         if curdepth == 0:
-            t_H, t_W, s_H, s_W = t_H // 16, t_W // 16, s_H // 16, s_W // 16
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
         else:
             template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
             search = rearrange(search, 'b c h w -> b (h w) c').contiguous()
@@ -525,8 +591,8 @@ class VisionTransformer(nn.Module):
             search = self.patch_embed_t(search)
             search = self.pos_drop(search + self.pos_embed_s)
         x = torch.cat([template, search], dim=1)
-        x = self.blocks[curdepth].forward_train_fuse_vt(x)
-        if curdepth == 11:
+        x = self.blocks[curdepth].forward_train_fuse_vt(x, vt_it)
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         template, search = torch.split(x, [t_H * t_W, s_H * s_W], dim=1)
@@ -537,7 +603,7 @@ class VisionTransformer(nn.Module):
     def set_online(self, ini_it_vt, curdepth):
         t_B, t_C, t_H, t_W = ini_it_vt.shape
         if curdepth == 0:
-            t_H, t_W = t_H // 16, t_W // 16
+            t_H, t_W = t_H // self.patch_size, t_W // self.patch_size
         else:
             ini_it_vt = rearrange(ini_it_vt, 'b c h w -> b (h w) c').contiguous()
 
@@ -545,7 +611,7 @@ class VisionTransformer(nn.Module):
             ini_it_vt = self.patch_embed_t(ini_it_vt)
             ini_it_vt = self.pos_drop(ini_it_vt + self.pos_embed_t)
         x = self.blocks[curdepth].set_online(ini_it_vt)
-        if curdepth == 11:
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         ini_it_vt = rearrange(x, 'b (h w) c -> b c h w', h=t_H, w=t_W).contiguous()
@@ -555,7 +621,7 @@ class VisionTransformer(nn.Module):
         t_B, t_C, t_H, t_W = template.shape
         s_B, s_C, s_H, s_W = search.size()
         if curdepth == 0:
-            t_H, t_W, s_H, s_W = t_H // 16, t_W // 16, s_H // 16, s_W // 16
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
         else:
             template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
             search = rearrange(search, 'b c h w -> b (h w) c').contiguous()
@@ -567,7 +633,7 @@ class VisionTransformer(nn.Module):
             search = self.pos_drop(search + self.pos_embed_s)
         x = torch.cat([template, search], dim=1)
         x = self.blocks[curdepth].forward_test(x)
-        if curdepth == 11:
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         template, search = torch.split(x, [t_H * t_W, s_H * s_W], dim=1)
@@ -575,11 +641,52 @@ class VisionTransformer(nn.Module):
         search = rearrange(search, 'b (h w) c -> b c h w', h=s_H, w=s_W).contiguous()
         return template, search
     
+    def set_online_without_vt(self, ini_it, curdepth):
+        t_B, t_C, t_H, t_W = ini_it.shape
+        if curdepth == 0:
+            t_H, t_W = t_H // self.patch_size, t_W // self.patch_size
+        else:
+            ini_it = rearrange(ini_it, 'b c h w -> b (h w) c').contiguous()
+
+        if curdepth == 0:
+            ini_it = self.patch_embed_t(ini_it)
+            ini_it = self.pos_drop(ini_it + self.pos_embed_t)
+        x = self.blocks[curdepth].set_online_without_vt(ini_it)
+        if curdepth == (self.depth - 1):
+            x = self.norm(x)
+
+        ini_it = rearrange(x, 'b (h w) c -> b c h w', h=t_H, w=t_W).contiguous()
+        return ini_it
+
+    def forward_test_without_vt(self, template, search, curdepth):
+        t_B, t_C, t_H, t_W = template.shape
+        s_B, s_C, s_H, s_W = search.size()
+        if curdepth == 0:
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
+        else:
+            template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
+            search = rearrange(search, 'b c h w -> b (h w) c').contiguous()
+
+        if curdepth == 0:
+            template = self.patch_embed_t(template)
+            template = self.pos_drop(template + self.pos_embed_t)
+            search = self.patch_embed_t(search)
+            search = self.pos_drop(search + self.pos_embed_s)
+        x = torch.cat([template, search], dim=1)
+        x = self.blocks[curdepth].forward_test_without_vt(x)
+        if curdepth == (self.depth - 1):
+            x = self.norm(x)
+
+        template, search = torch.split(x, [t_H * t_W, s_H * s_W], dim=1)
+        template = rearrange(template, 'b (h w) c -> b c h w', h=t_H, w=t_W).contiguous()
+        search = rearrange(search, 'b (h w) c -> b c h w', h=s_H, w=s_W).contiguous()
+        return template, search
+
     def forward_profile(self, template, inherent_template, search, curdepth):
         t_B, t_C, t_H, t_W = template.shape
         s_B, s_C, s_H, s_W = search.size()
         if curdepth == 0:
-            t_H, t_W, s_H, s_W = t_H // 16, t_W // 16, s_H // 16, s_W // 16
+            t_H, t_W, s_H, s_W = t_H // self.patch_size, t_W // self.patch_size, s_H // self.patch_size, s_W // self.patch_size
         else:
             template = rearrange(template, 'b c h w -> b (h w) c').contiguous()
             inherent_template = rearrange(inherent_template, 'b c h w -> b (h w) c').contiguous()
@@ -594,7 +701,7 @@ class VisionTransformer(nn.Module):
             search = self.pos_drop(search + self.pos_embed_s)
         x = torch.cat([template, inherent_template, search], dim=1)
         x = self.blocks[curdepth].forward_profile(x)
-        if curdepth == 11:
+        if curdepth == (self.depth - 1):
             x = self.norm(x)
 
         template, inherent_template, search = torch.split(x, [t_H * t_W, t_H * t_W, s_H * s_W], dim=1)
@@ -604,10 +711,185 @@ class VisionTransformer(nn.Module):
         return template, inherent_template, search
 
 
-def load_checkpoint(cur_encoder):
+# Load models
+def load_checkpoint_tiny_22k_npz(cur_encoder, ckpt_path):
     try:
-        ckpt_path = 'pretrained/mae/mae_pretrain_vit_base.pth'
+        ckpt = np.load(ckpt_path)
+        filelist = ckpt.files
+        tmpckpt = {}
+        for item in filelist:
+            tmpckpt[item] = torch.from_numpy(ckpt[item])
+        ckpt = tmpckpt
+        transfer_ckpt = {}
+        # create pos_embed and copy from Transformer/posembed_input/pos_embedding
+        transfer_ckpt['pos_embed'] = ckpt['Transformer/posembed_input/pos_embedding']
+        # interpolate position embedding
+        interpolate_pos_embed(cur_encoder, transfer_ckpt)
+        # create patch_embed and copy from embedding
+        transfer_ckpt['patch_embed_t.proj.weight'] = ckpt['embedding/kernel'].permute(3, 2, 0, 1)
+        transfer_ckpt['patch_embed_t.proj.bias'] = ckpt['embedding/bias']
+        # create norm and copy from encoder_norm
+        transfer_ckpt['norm.weight'] = ckpt['Transformer/encoder_norm/scale']
+        transfer_ckpt['norm.bias'] = ckpt['Transformer/encoder_norm/bias']
+        # deal with name in layers
+        for item in filelist:
+            if 'Transformer/encoderblock_' not in item:
+                continue
+            curkey = item.replace('Transformer/encoderblock_', 'blocks/')
+            ck = curkey.split('/')
+            if ck[3] == 'out':
+                k1 = 'blocks.' + ck[1] + '.attn.proj.'
+                if ck[4] == 'bias':
+                    transfer_ckpt[k1 + 'bias'] = ckpt[item]
+                else:
+                    transfer_ckpt[k1 + 'weight'] = ckpt[item].reshape(192, 192).t()
+            elif ck[3] == 'query':
+                wbq = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/query/' + ck[4]
+                wbk = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/key/' + ck[4]
+                wbv = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/value/' + ck[4]
+                kwb = 'blocks.' + ck[1] + '.attn.qkv.'
+                if ck[4] == 'bias':
+                    transfer_ckpt[kwb + 'bias'] = torch.cat([ckpt[wbq].reshape(192),
+                                                             ckpt[wbk].reshape(192),
+                                                             ckpt[wbv].reshape(192)], dim=0)
+                else:
+                    transfer_ckpt[kwb + 'weight'] = torch.cat([ckpt[wbq].reshape(192, 192).t(),
+                                                               ckpt[wbk].reshape(192, 192).t(),
+                                                               ckpt[wbv].reshape(192, 192).t()], dim=0)
+            elif ck[3] != 'key' and ck[3] != 'value':
+                if ck[2] == 'LayerNorm_0':
+                    if ck[3] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.norm1.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.norm1.weight'] = ckpt[item]
+                elif ck[2] == 'LayerNorm_2':
+                    if ck[3] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.norm2.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.norm2.weight'] = ckpt[item]
+                elif ck[3] == 'Dense_0':
+                    if ck[4] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc1.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc1.weight'] = ckpt[item].t()
+                else:
+                    if ck[4] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc2.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc2.weight'] = ckpt[item].t()
+        # load
+        model_ckpt = cur_encoder.state_dict()
+        state_ckpt = {k: v for k, v in transfer_ckpt.items() if k in model_ckpt.keys()}
+        model_ckpt.update(state_ckpt)
+        missing_keys, unexpected_keys = cur_encoder.load_state_dict(model_ckpt, strict=False)
+        # print to check
+        for k, v in cur_encoder.named_parameters():
+            if k in transfer_ckpt.keys():
+                if is_main_process():
+                    print(k)
+            else:
+                if is_main_process():
+                    print("# not in transfer_ckpt: " + k)
+        if is_main_process():
+            print("missing keys:", missing_keys)
+            print("unexpected keys:", unexpected_keys)
+            print("Loading pretrained 22k done.")
+    except Exception as e:
+        print("Warning: Pretrained 22k weights are not loaded")
+        print(e.args)
+
+
+def load_checkpoint_small_22k_npz(cur_encoder, ckpt_path):
+    try:
+        ckpt = np.load(ckpt_path)
+        filelist = ckpt.files
+        tmpckpt = {}
+        for item in filelist:
+            tmpckpt[item] = torch.from_numpy(ckpt[item])
+        ckpt = tmpckpt
+        transfer_ckpt = {}
+        # create pos_embed and copy from Transformer/posembed_input/pos_embedding
+        transfer_ckpt['pos_embed'] = ckpt['Transformer/posembed_input/pos_embedding']
+        # interpolate position embedding
+        interpolate_pos_embed(cur_encoder, transfer_ckpt)
+        # create patch_embed and copy from embedding
+        transfer_ckpt['patch_embed_t.proj.weight'] = ckpt['embedding/kernel'].permute(3, 2, 0, 1)
+        transfer_ckpt['patch_embed_t.proj.bias'] = ckpt['embedding/bias']
+        # create norm and copy from encoder_norm
+        transfer_ckpt['norm.weight'] = ckpt['Transformer/encoder_norm/scale']
+        transfer_ckpt['norm.bias'] = ckpt['Transformer/encoder_norm/bias']
+        # deal with name in layers
+        for item in filelist:
+            if 'Transformer/encoderblock_' not in item:
+                continue
+            curkey = item.replace('Transformer/encoderblock_', 'blocks/')
+            ck = curkey.split('/')
+            if ck[3] == 'out':
+                k1 = 'blocks.' + ck[1] + '.attn.proj.'
+                if ck[4] == 'bias':
+                    transfer_ckpt[k1 + 'bias'] = ckpt[item]
+                else:
+                    transfer_ckpt[k1 + 'weight'] = ckpt[item].reshape(384, 384).t()
+            elif ck[3] == 'query':
+                wbq = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/query/' + ck[4]
+                wbk = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/key/' + ck[4]
+                wbv = 'Transformer/encoderblock_' + ck[1] + '/' + ck[2] + '/value/' + ck[4]
+                kwb = 'blocks.' + ck[1] + '.attn.qkv.'
+                if ck[4] == 'bias':
+                    transfer_ckpt[kwb + 'bias'] = torch.cat([ckpt[wbq].reshape(384),
+                                                             ckpt[wbk].reshape(384),
+                                                             ckpt[wbv].reshape(384)], dim=0)
+                else:
+                    transfer_ckpt[kwb + 'weight'] = torch.cat([ckpt[wbq].reshape(384, 384).t(),
+                                                               ckpt[wbk].reshape(384, 384).t(),
+                                                               ckpt[wbv].reshape(384, 384).t()], dim=0)
+            elif ck[3] != 'key' and ck[3] != 'value':
+                if ck[2] == 'LayerNorm_0':
+                    if ck[3] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.norm1.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.norm1.weight'] = ckpt[item]
+                elif ck[2] == 'LayerNorm_2':
+                    if ck[3] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.norm2.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.norm2.weight'] = ckpt[item]
+                elif ck[3] == 'Dense_0':
+                    if ck[4] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc1.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc1.weight'] = ckpt[item].t()
+                else:
+                    if ck[4] == 'bias':
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc2.bias'] = ckpt[item]
+                    else:
+                        transfer_ckpt['blocks.' + ck[1] + '.mlp.fc2.weight'] = ckpt[item].t()
+        # load
+        model_ckpt = cur_encoder.state_dict()
+        state_ckpt = {k: v for k, v in transfer_ckpt.items() if k in model_ckpt.keys()}
+        model_ckpt.update(state_ckpt)
+        missing_keys, unexpected_keys = cur_encoder.load_state_dict(model_ckpt, strict=False)
+        # print to check
+        for k, v in cur_encoder.named_parameters():
+            if k in transfer_ckpt.keys():
+                if is_main_process():
+                    print(k)
+            else:
+                if is_main_process():
+                    print("# not in transfer_ckpt: " + k)
+        if is_main_process():
+            print("missing keys:", missing_keys)
+            print("unexpected keys:", unexpected_keys)
+            print("Loading pretrained 22k small done.")
+    except Exception as e:
+        print("Warning: Pretrained 22k small weights are not loaded")
+        print(e.args)
+
+
+def load_checkpoint(cur_encoder, ckpt_path):
+    try:
         ckpt = torch.load(ckpt_path, map_location='cpu')
+        ckpt_type = "MAE"
         ckpt = ckpt['model']
         # interpolate position embedding
         interpolate_pos_embed(cur_encoder, ckpt)
@@ -630,16 +912,34 @@ def load_checkpoint(cur_encoder):
         if is_main_process():
             print("missing keys:", missing_keys)
             print("unexpected keys:", unexpected_keys)
-            print("Loading pretrained MAE done.")
+            print("Loading pretrained {} done.".format(ckpt_type))
     except Exception as e:
-        print("Warning: Pretrained MAE weights are not loaded.")
+        print("Warning: Pretrained weights are not loaded.")
         print(e.args)
 
 
-def build_transformer(t_size, s_size):
+def build_transformer_tiny(t_size, s_size):
+    model = VisionTransformer(
+        img_size_t=t_size, img_size_s=s_size, patch_size=16, embed_dim=192, depth=12, num_heads=3, mlp_ratio=4, qkv_bias=True,
+        class_token=False, drop_path_rate=0.1, norm_layer=partial(nn.LayerNorm, eps=1e-6), global_pool='')
+    load_checkpoint_tiny_22k_npz(model, ckpt_path = 'pretrained/21k_1k/vit_tiny_22k_384.npz')
+
+    return model
+
+
+def build_transformer_small(t_size, s_size):
+    model = VisionTransformer(
+        img_size_t=t_size, img_size_s=s_size, patch_size=16, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4, qkv_bias=True,
+        class_token=False, drop_path_rate=0.1, norm_layer=partial(nn.LayerNorm, eps=1e-6), global_pool='')
+    load_checkpoint_small_22k_npz(model, ckpt_path = 'pretrained/21k_1k/vit_small_22k_384.npz')
+
+    return model
+
+
+def build_transformer_base(t_size, s_size):
     model = VisionTransformer(
         img_size_t=t_size, img_size_s=s_size, patch_size=16, embed_dim=768, depth=12, num_heads=12, mlp_ratio=4, qkv_bias=True,
         class_token=False, drop_path_rate=0.1, norm_layer=partial(nn.LayerNorm, eps=1e-6), global_pool='')
-    load_checkpoint(model)
+    load_checkpoint(model, ckpt_path='pretrained/mae/mae_pretrain_vit_base.pth')
 
     return model

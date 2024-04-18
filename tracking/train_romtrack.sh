@@ -17,4 +17,4 @@ python tracking/train.py --script ROMTrack --config got_stage1 --save_dir /YOUR/
 # and put the final ckpt of Stage1 into it
 python tracking/train.py --script ROMTrack --config got_stage2 --save_dir /YOUR/PATH/TO/SAVE --mode multiple --nproc_per_node 4
 
-### For other models(ROMTrack-384, ROMTrack-384(Only for GOT-10k)), just modify the config
+### For other models(ROMTrack-384, ROMTrack-384(Only for GOT-10k), ROMTrack-Large-384, ROMTrack-Tiny-256, ROMTrack-Small-256), just modify the config

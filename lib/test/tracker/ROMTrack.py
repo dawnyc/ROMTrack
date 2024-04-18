@@ -4,7 +4,8 @@ from lib.train.data.processing_utils import sample_target
 # for debug
 import cv2
 import os
-from lib.models.ROMTrack import build_vit
+from lib.models.ROMTrack import build_vit_tiny, build_vit_small
+from lib.models.ROMTrack import build_vit_base
 from lib.test.tracker.tracker_utils import Preprocessor_wo_mask
 from lib.utils.box_ops import clip_box
 from lib.test.tracker.tracker_utils import vis_attn_maps, vis_feature_maps
@@ -13,11 +14,36 @@ from lib.test.utils.hann import hann2d
 
 
 class ROMTrack(BaseTracker):
-    def __init__(self, params, dataset_name):
+    def __init__(self, params, parameter_name, dataset_name):
         super(ROMTrack, self).__init__(params)
-        network = build_vit(params.cfg)
-        network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu'), strict=True)
-        # network.load_state_dict(torch.load(self.params.checkpoint, map_location='cpu')['net'], strict=True)
+        stride = 16
+        if 'tiny' in parameter_name:
+            network = build_vit_tiny(params.cfg)
+        elif 'small' in parameter_name:
+            network = build_vit_small(params.cfg)
+        else:
+            network = build_vit_base(params.cfg)
+        
+        if "stage1" in parameter_name:
+            self.stage = 1
+        else:
+            self.stage = 2
+
+        loaded_ckpt = torch.load(self.params.checkpoint, map_location='cpu')
+        if 'net' not in loaded_ckpt.keys():
+            network.load_state_dict(loaded_ckpt, strict=True)
+        else:
+            network.load_state_dict(loaded_ckpt['net'], strict=True)
+            # transform the checkpoint to a simple version(i.e., without info like optimizer, epoch, ...)
+            trans_name = self.params.checkpoint
+            trans_name = trans_name.split('/')[-1]
+            if os.path.exists(f"./trans/{trans_name}"):
+                pass
+            else:
+                if not os.path.exists("./trans/"):
+                    os.makedirs("./trans/")
+                torch.save(network.state_dict(), f"./trans/{trans_name}")
+        
         self.cfg = params.cfg
         self.network = network.cuda()
         self.network.eval()
@@ -26,7 +52,7 @@ class ROMTrack(BaseTracker):
         self.preprocessor = Preprocessor_wo_mask()
         self.state = None
 
-        self.feat_sz = self.cfg.TEST.SEARCH_SIZE // 16
+        self.feat_sz = self.cfg.TEST.SEARCH_SIZE // stride
         # motion constrain
         self.output_window = hann2d(torch.tensor([self.feat_sz, self.feat_sz]).long(), centered=True).cuda()
 
@@ -66,7 +92,10 @@ class ROMTrack(BaseTracker):
                     hooks.append(self.network.encoder.blocks[i].attn.proj_drop.register_forward_hook(
                         lambda self, input, output: features.append(output)
                     ))
-            self.network.set_online(self.ini_it_vt)
+            if self.stage == 1:
+                self.network.set_online_without_vt(self.ini_it_vt)
+            else:
+                self.network.set_online(self.ini_it_vt)
             if self.params.vis_attn == 1:
                 for hook in hooks:
                     hook.remove()
@@ -116,7 +145,10 @@ class ROMTrack(BaseTracker):
                     hooks.append(self.network.encoder.blocks[i].attn.proj_drop.register_forward_hook(
                         lambda self, input, output: features.append(output)
                     ))
-            out_dict, _ = self.network.forward_test(self.template, search)
+            if self.stage == 1:
+                out_dict, _ = self.network.forward_test_without_vt(self.template, search)
+            else:
+                out_dict, _ = self.network.forward_test(self.template, search)
             if self.params.vis_attn == 1 and self.frame_id in visarr:
                 for hook in hooks:
                     hook.remove()
