@@ -14,6 +14,10 @@ def parameters(yaml_name: str, model=None, search_area_scale=None):
         script_name += '-Tiny'
     elif 'small' in yaml_name:
         script_name += '-Small'
+    elif 'large' in yaml_name:
+        script_name += '-Large'
+    elif 'huge' in yaml_name:
+        script_name += '-Huge'
     else:
         script_name += '-Base'
     yaml_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, yaml_name))

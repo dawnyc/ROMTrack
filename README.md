@@ -27,7 +27,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 |     GPU FPS / MACs(G) / Params(M)    |       116 / 34.5 / 92.1      |        67 / 77.7 / 92.1      |
 |                CPU FPS               |              9.9             |              3.0             |
 
-#### Extended Models 
+#### Extended Models (Efficiency-Oriented)
 
 |                Variant               |       ROMTrack-Tiny-256      |      ROMTrack-Small-256      |
 | :----------------------------------: | :--------------------------: | :--------------------------: |
@@ -43,9 +43,29 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 |     GPU FPS / MACs(G) / Params(M)    |       466 /  2.7 / 8.0       |       236 /  9.3 / 25.4      |
 |                CPU FPS               |             36.6             |             17.2             |
 
-## :newspaper: News
-**[April 18, 2024]**
+#### Extended Models (Performance-Oriented)
 
+|                Variant               |      ROMTrack-Large-384      |
+| :----------------------------------: | :--------------------------: |
+|             Model Setting            |           ViT-Large          |
+|           Pretrained Method          |             MAE              |
+|           Pretrained Weight          |[MAE checkpoint](https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_large.pth)|
+|           Template / Search          |      192×192 / 384×384       |
+|    LaSOT <br> (AUC / Norm P / P)     |      72.0 / 81.7 / 79.1      |
+| TrackingNet <br> (AUC / Norm P / P)  |      85.2 / 89.8 / 85.4      |
+|  LaSOT_ext <br> (AUC / Norm P / P)   |      52.9 / 64.3 / 60.9      |
+|    TNL2K <br> (AUC / Norm P / P)     |      60.4 / 77.7 / 63.9      |
+|      NFS / OTB / UAV <br> (AUC)      |      69.2 / 71.0 / 71.5      |
+|     GPU FPS / MACs(G) / Params(M)    |      21 / 266.5 / 311.3      |
+|                CPU FPS               |              1.1             |
+
+## :newspaper: News
+**[May 2, 2024]**
+- We release the extended models ***<u>ROMTrack-Large-384</u>*** for Performance-Oriented Visual Tracking!
+- Models and Raw Results for all versions of ROMTrack are available on Google Drive or Baidu Netdisk.
+- Code and script for VOT2020 evaluation are available now.
+
+**[April 18, 2024]**
 - We release the extended models ***<u>ROMTrack-Tiny-256</u>*** and ***<u>ROMTrack-Small-256</u>*** for Efficient Visual Tracking!
 - We provide detailed information for all versions of ROMTrack, see **Base Models** and **Extended Models** above.
 
@@ -77,9 +97,9 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 - ROMTrack is accepted to **ICCV2023**!
 
 ## :calendar: TODO
-- [x] Extended Models for ROMTrack
+- [x] Extended Models (Efficiency-Oriented & Performance-Oriented) for ROMTrack
 - [x] Repository Upgrade
-- [x] More Analysis(Radar Plot) and More Results(TNL2K Dataset)
+- [x] More Analysis (Radar Plot) and More Results (TNL2K Dataset)
 - [x] Code for ROMTrack
 - [x] Model Zoo and Raw Results
 - [x] Refine README
@@ -171,6 +191,20 @@ bash tracking/train_romtrack.sh
 - LaSOT/LaSOT_ext/GOT10k-test/TrackingNet/OTB100/UAV123/NFS30. More details of test settings can be found at ```tracking/test_romtrack.sh```
 ```
 bash tracking/test_romtrack.sh
+```
+
+- VOT2020. 
+```
+cd external/vot2020/<workspace_dir>
+export PYTHONPATH=<path to the romtrack project>:$PYTHONPATH
+
+### Evaluate ROMTrack with AlphaRefine
+vot evaluate --workspace . trackers_ar
+vot analysis --nocache
+
+### Evaluate ROMTrack without AlphaRefine
+vot evaluate --workspace . trackers
+vot analysis --nocache
 ```
 
 ## :book: Compute FLOPs/Params and test speed

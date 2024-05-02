@@ -63,6 +63,10 @@ def run_training(script_name, config_name, cudnn_benchmark=True, local_rank=-1, 
         script_name += '-Tiny'
     elif 'small' in config_name:
         script_name += '-Small'
+    elif 'large' in config_name:
+        script_name += '-Large'
+    elif 'huge' in config_name:
+        script_name += '-Huge'
     else:
         script_name += '-Base'
     settings.cfg_file = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, config_name))

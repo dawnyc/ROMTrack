@@ -3,7 +3,7 @@ from torch import nn
 import copy
 
 from .Transformer import build_transformer_tiny, build_transformer_small
-from .Transformer import build_transformer_base
+from .Transformer import build_transformer_base, build_transformer_large, build_transformer_huge
 from .head import build_box_head
 
 from lib.utils.box_ops import box_xyxy_to_cxcywh, box_cxcywh_to_xyxy
@@ -161,4 +161,18 @@ def build_vit_base(cfg):
     encoder = build_transformer_base(cfg.DATA.TEMPLATE.SIZE, cfg.DATA.SEARCH.SIZE)
     head = build_box_head(cfg)
     model = ROMTrack(encoder, head, cfg.MODEL.HEAD_TYPE, 12)
+    return model
+
+
+def build_vit_large(cfg):
+    encoder = build_transformer_large(cfg.DATA.TEMPLATE.SIZE, cfg.DATA.SEARCH.SIZE)
+    head = build_box_head(cfg)
+    model = ROMTrack(encoder, head, cfg.MODEL.HEAD_TYPE, 24)
+    return model
+
+
+def build_vit_huge(cfg):
+    encoder = build_transformer_huge(cfg.DATA.TEMPLATE.SIZE, cfg.DATA.SEARCH.SIZE)
+    head = build_box_head(cfg, stride=14)
+    model = ROMTrack(encoder, head, cfg.MODEL.HEAD_TYPE, 32)
     return model

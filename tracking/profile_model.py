@@ -66,6 +66,10 @@ if __name__ == "__main__":
         script_name += '-Tiny'
     elif 'small' in yaml_name:
         script_name += '-Small'
+    elif 'large' in yaml_name:
+        script_name += '-Large'
+    elif 'huge' in yaml_name:
+        script_name += '-Huge'
     else:
         script_name += '-Base'
     yaml_fname = os.path.join(prj_dir, 'experiments/%s/%s.yaml' % (script_name, args.config))
@@ -87,6 +91,10 @@ if __name__ == "__main__":
             model_constructor = model_module.build_vit_small
         elif "baseline" in args.config:
             model_constructor = model_module.build_vit_base
+        elif "large" in args.config:
+            model_constructor = model_module.build_vit_large
+        elif "huge" in args.config:
+            model_constructor = model_module.build_vit_huge
         model = model_constructor(cfg)
         # model = model.half()
         # get the template and search

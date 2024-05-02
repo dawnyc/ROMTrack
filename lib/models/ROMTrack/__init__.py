@@ -1,1 +1,1 @@
-from .ROMTrack import build_vit_tiny, build_vit_small, build_vit_base
+from .ROMTrack import build_vit_tiny, build_vit_small, build_vit_base, build_vit_large, build_vit_huge

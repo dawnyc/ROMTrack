@@ -11,7 +11,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from .base_functions import *
 # network related
 from lib.models.ROMTrack import build_vit_tiny, build_vit_small
-from lib.models.ROMTrack import build_vit_base
+from lib.models.ROMTrack import build_vit_base, build_vit_large, build_vit_huge
 # forward propagation related
 from lib.train.actors import ROMTrackActor
 # for import modules
@@ -61,6 +61,10 @@ def run(settings):
             net = build_vit_tiny(cfg)
         elif 'small' in settings.config_name:
             net = build_vit_small(cfg)
+        elif 'large' in settings.config_name:
+            net = build_vit_large(cfg)
+        elif 'huge' in settings.config_name:
+            net = build_vit_huge(cfg)
         else:
             net = build_vit_base(cfg)
         print("building vit without score")

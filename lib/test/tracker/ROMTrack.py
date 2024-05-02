@@ -5,7 +5,7 @@ from lib.train.data.processing_utils import sample_target
 import cv2
 import os
 from lib.models.ROMTrack import build_vit_tiny, build_vit_small
-from lib.models.ROMTrack import build_vit_base
+from lib.models.ROMTrack import build_vit_base, build_vit_large, build_vit_huge
 from lib.test.tracker.tracker_utils import Preprocessor_wo_mask
 from lib.utils.box_ops import clip_box
 from lib.test.tracker.tracker_utils import vis_attn_maps, vis_feature_maps
@@ -21,6 +21,11 @@ class ROMTrack(BaseTracker):
             network = build_vit_tiny(params.cfg)
         elif 'small' in parameter_name:
             network = build_vit_small(params.cfg)
+        elif 'large' in parameter_name:
+            network = build_vit_large(params.cfg)
+        elif 'huge' in parameter_name:
+            network = build_vit_huge(params.cfg)
+            stride = 14
         else:
             network = build_vit_base(params.cfg)
         

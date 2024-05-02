@@ -943,3 +943,20 @@ def build_transformer_base(t_size, s_size):
     load_checkpoint(model, ckpt_path='pretrained/mae/mae_pretrain_vit_base.pth')
 
     return model
+
+
+def build_transformer_large(t_size, s_size):
+    model = VisionTransformer(
+        img_size_t=t_size, img_size_s=s_size, patch_size=16, embed_dim=1024, depth=24, num_heads=16, mlp_ratio=4, qkv_bias=True,
+        class_token=False, drop_path_rate=0.1, norm_layer=partial(nn.LayerNorm, eps=1e-6), global_pool='')
+    load_checkpoint(model, ckpt_path='pretrained/mae/mae_pretrain_vit_large.pth')
+
+    return model
+
+def build_transformer_huge(t_size, s_size):
+    model = VisionTransformer(
+        img_size_t=t_size, img_size_s=s_size, patch_size=14, embed_dim=1280, depth=32, num_heads=16, mlp_ratio=4, qkv_bias=True,
+        class_token=False, drop_path_rate=0.1, norm_layer=partial(nn.LayerNorm, eps=1e-6), global_pool='')
+    load_checkpoint(model, ckpt_path='pretrained/mae/mae_pretrain_vit_huge.pth')
+
+    return model
