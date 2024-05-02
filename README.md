@@ -188,7 +188,8 @@ bash tracking/train_romtrack.sh
 
 ## :book: Test and evaluate ROMTrack on benchmarks
 
-- LaSOT/LaSOT_ext/GOT10k-test/TrackingNet/OTB100/UAV123/NFS30. More details of test settings can be found at ```tracking/test_romtrack.sh```
+- LaSOT/LaSOT_ext/GOT10k-test/TrackingNet/OTB100/UAV123/NFS30. 
+  - More details of test settings can be found at ```tracking/test_romtrack.sh```
 ```
 bash tracking/test_romtrack.sh
 ```
@@ -209,7 +210,7 @@ vot analysis --nocache
 
 ## :book: Compute FLOPs/Params and test speed
 ```
-python tracking/profile_model.py --config="baseline_stage1"
+bash tracking/profile_romtrack.sh
 ```
 
 ## :book: Visualization
