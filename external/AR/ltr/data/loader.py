@@ -2,14 +2,16 @@ import torch
 import torch.utils.data.dataloader
 import importlib
 import collections
-from torch._six import string_classes
-# from torch._six import string_classes, int_classes
-from pytracking import TensorDict, TensorList
+from lib.utils import TensorDict, TensorList
 
-if float(torch.__version__[:3]) >= 1.9 or len('.'.join((torch.__version__).split('.')[0:2])) > 3:
+if float(torch.__version__[:3]) >= 2.0:
+    string_classes = (str, bytes)
+    int_classes = int
+elif float(torch.__version__[:3]) >= 1.9 or len('.'.join((torch.__version__).split('.')[0:2])) > 3:
+    from torch._six import string_classes
     int_classes = int
 else:
-    from torch._six import int_classes
+    from torch._six import string_classes, int_classes
 
 
 def _check_use_shared_memory():

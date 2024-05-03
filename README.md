@@ -194,17 +194,15 @@ bash tracking/train_romtrack.sh
 bash tracking/test_romtrack.sh
 ```
 
-- VOT2020. 
+- VOT2020. Current version is vot-toolkit(==0.5.3) and vot-trax(==3.0.3).
+  - Take ROMTrack below as an example.
 ```
-cd external/vot2020/<workspace_dir>
-export PYTHONPATH=<path to the romtrack project>:$PYTHONPATH
-
 ### Evaluate ROMTrack with AlphaRefine
-vot evaluate --workspace . trackers_ar
+vot evaluate --workspace ./external/vot2020/ROMTrack ROMTrack_AR
 vot analysis --nocache
 
 ### Evaluate ROMTrack without AlphaRefine
-vot evaluate --workspace . trackers
+vot evaluate --workspace ./external/vot2020/ROMTrack ROMTrack
 vot analysis --nocache
 ```
 

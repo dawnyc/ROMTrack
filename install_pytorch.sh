@@ -87,4 +87,8 @@ pip install yacs
 pip install einops
 pip install thop
 
+echo "****************** Installing vot-toolkit ******************"
+pip install vot-toolkit==0.5.3
+pip install vot-trax==3.0.3
+
 echo "****************** Installation complete! ******************"
