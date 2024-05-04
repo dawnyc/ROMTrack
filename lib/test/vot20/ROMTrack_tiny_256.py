@@ -9,7 +9,7 @@ from lib.test.vot20.ROMTrack_vot20 import run_vot_exp
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 tracker_params = {}
-tracker_params['model'] = "ROMTrack-384_epoch0100.pth.tar"
+tracker_params['model'] = "ROMTrack-Tiny-256_epoch0100.pth.tar"
 tracker_params['vis_attn'] = 0
-tracker_params['search_area_scale'] = 5.0
-run_vot_exp('ROMTrack', 'baseline_384_stage2', vis=False, tracker_params=tracker_params)
+tracker_params['search_area_scale'] = 4.0
+run_vot_exp('ROMTrack', 'tiny_256_stage2', vis=False, tracker_params=tracker_params)

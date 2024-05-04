@@ -1,0 +1,4 @@
+registry:
+- ./trackers.ini
+- ./trackers_ar.ini
+stack: vot2020

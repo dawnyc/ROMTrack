@@ -14,6 +14,6 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 tracker_params = {}
 tracker_params['model'] = "ROMTrack_epoch0100.pth.tar"
 tracker_params['vis_attn'] = 0
-tracker_params['search_area_scale'] = 3.95
+tracker_params['search_area_scale'] = 4.0
 run_vot_exp('ROMTrack', 'baseline_stage2',
             'ARcm_coco_seg_only_mask_384', 0.6, VIS=False, tracker_params=tracker_params)

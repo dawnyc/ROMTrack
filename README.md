@@ -24,6 +24,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 |  LaSOT_ext <br> (AUC / Norm P / P)   |      48.9 / 59.3 / 55.0      |      51.3 / 62.4 / 58.6      |
 |    TNL2K <br> (AUC / Norm P / P)     |      56.9 / 73.7 / 58.1      |      58.0 / 75.0 / 59.6      |
 |      NFS / OTB / UAV <br> (AUC)      |      68.0 / 71.4 / 69.7      |      68.8 / 70.9 / 70.5      |
+|   VOT2020 BBox <br> (EAO / A / R)    |    0.326 / 0.480 / 0.816     |    0.329 / 0.483 / 0.822     |
 |     GPU FPS / MACs(G) / Params(M)    |       116 / 34.5 / 92.1      |        67 / 77.7 / 92.1      |
 |                CPU FPS               |              9.9             |              3.0             |
 
@@ -40,6 +41,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 |  LaSOT_ext <br> (AUC / Norm P / P)   |      40.4 / 49.7 / 43.1      |      43.2 / 52.9 / 47.1      |
 |    TNL2K <br> (AUC / Norm P / P)     |      48.6 / 64.4 / 45.5      |      52.0 / 68.7 / 50.5      |
 |      NFS / OTB / UAV <br> (AUC)      |      62.5 / 68.5 / 62.9      |      65.3 / 68.9 / 66.4      |
+|   VOT2020 BBox <br> (EAO / A / R)    |    0.265 / 0.459 / 0.704     |    0.297 / 0.477 / 0.764     |
 |     GPU FPS / MACs(G) / Params(M)    |       466 /  2.7 / 8.0       |       236 /  9.3 / 25.4      |
 |                CPU FPS               |             36.6             |             17.2             |
 
@@ -56,6 +58,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 |  LaSOT_ext <br> (AUC / Norm P / P)   |      52.9 / 64.3 / 60.9      |
 |    TNL2K <br> (AUC / Norm P / P)     |      60.4 / 77.7 / 63.9      |
 |      NFS / OTB / UAV <br> (AUC)      |      69.2 / 71.0 / 71.5      |
+|   VOT2020 BBox <br> (EAO / A / R)    |    0.338 / 0.492 / 0.820     |
 |     GPU FPS / MACs(G) / Params(M)    |      21 / 266.5 / 311.3      |
 |                CPU FPS               |              1.1             |
 
@@ -195,15 +198,15 @@ bash tracking/test_romtrack.sh
 ```
 
 - VOT2020. Current version is vot-toolkit(==0.5.3) and vot-trax(==3.0.3).
-  - Take ROMTrack below as an example.
+  - Take ROMTrack-Large-384 below as an example.
 ```
-### Evaluate ROMTrack with AlphaRefine
-vot evaluate --workspace ./external/vot2020/ROMTrack ROMTrack_AR
-vot analysis --nocache
+### Evaluate ROMTrack-Large-384 with AlphaRefine
+vot evaluate --workspace ./external/vot2020/ROMTrack_large_384 ROMTrack_large_384_AR
+vot analysis --nocache --workspace ./external/vot2020/ROMTrack_large_384 ROMTrack_large_384_AR
 
-### Evaluate ROMTrack without AlphaRefine
-vot evaluate --workspace ./external/vot2020/ROMTrack ROMTrack
-vot analysis --nocache
+### Evaluate ROMTrack-Large-384 without AlphaRefine
+vot evaluate --workspace ./external/vot2020/ROMTrack_large_384 ROMTrack_large_384
+vot analysis --nocache --workspace ./external/vot2020/ROMTrack_large_384 ROMTrack_large_384
 ```
 
 ## :book: Compute FLOPs/Params and test speed

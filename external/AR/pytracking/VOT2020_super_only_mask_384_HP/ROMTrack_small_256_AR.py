@@ -12,8 +12,8 @@ from external.AR.pytracking.VOT2020_super_only_mask_384_HP.ROMTrack_alpha_seg_cl
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 tracker_params = {}
-tracker_params['model'] = "ROMTrack-384_epoch0100.pth.tar"
+tracker_params['model'] = "ROMTrack-Small-256_epoch0100.pth.tar"
 tracker_params['vis_attn'] = 0
-tracker_params['search_area_scale'] = 5.0
-run_vot_exp('ROMTrack', 'baseline_384_stage2',
+tracker_params['search_area_scale'] = 4.0
+run_vot_exp('ROMTrack', 'small_256_stage2',
             'ARcm_coco_seg_only_mask_384', 0.6, VIS=False, tracker_params=tracker_params)
