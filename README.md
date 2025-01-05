@@ -34,7 +34,7 @@ The official implementation of the ICCV 2023 paper [*Robust Object Modeling for 
 | :----------------------------------: | :--------------------------: | :--------------------------: |
 |             Model Setting            |           ViT-Tiny           |           ViT-Small          |
 |           Pretrained Method          |  Supervised on ImageNet-22k  |  Supervised on ImageNet-22k  |
-|           Pretrained Weight          |[Timm checkpoint](https://storage.googleapis.com/vit_models/augreg/Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_384.npz)|[Timm checkpoint](https://storage.googleapis.com/vit_models/augreg/S_32-i21k-300ep-lr_0.001-aug_light1-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_384.npz)|
+|           Pretrained Weight          |[Timm checkpoint](https://storage.googleapis.com/vit_models/augreg/Ti_16-i21k-300ep-lr_0.001-aug_none-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_384.npz)|[Timm checkpoint](https://storage.googleapis.com/vit_models/augreg/S_16-i21k-300ep-lr_0.001-aug_light1-wd_0.03-do_0.0-sd_0.0--imagenet2012-steps_20k-lr_0.03-res_224.npz)|
 |           Template / Search          |      128×128 / 256×256       |      128×128 / 256×256       |
 |    LaSOT <br> (AUC / Norm P / P)     |      59.3 / 68.8 / 60.4      |      62.3 / 72.3 / 65.3      |
 | TrackingNet <br> (AUC / Norm P / P)  |      75.8 / 81.7 / 71.5      |      78.5 / 84.3 / 75.3      |
